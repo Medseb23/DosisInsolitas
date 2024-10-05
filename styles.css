@@ -1,0 +1,88 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #282c34;
+    color: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: start;
+    height: 100vh;
+    margin: 0;
+    overflow-y: auto;
+}
+
+.container {
+    text-align: center;
+    background: #333;
+    padding: 20px;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 800px;
+    margin-top: 20px;
+}
+
+h1 {
+    color: #61dafb;
+    margin-bottom: 20px;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.info-box {
+    background: #444;
+    padding: 20px;
+    border-radius: 10px;
+    font-size: 1.1em;
+    color: #b0c4de;
+}
+
+.info-box h2 {
+    margin-top: 0;
+    color: #ffd700;
+}
+
+.lugares-lista {
+    max-height: 200px;
+    overflow-y: auto;
+    padding: 10px;
+    background: #555;
+    border-radius: 10px;
+}
+
+.lugares-lista div {
+    margin-bottom: 10px;
+}
+
+.grafico-temperatura {
+    background: #555;
+    padding: 20px;
+    border-radius: 10px;
+    font-size: 1.1em;
+    color: #b0c4de;
+    margin-top: 20px;
+}
+
+.recomendacion {
+    margin-top: 20px;
+    background: #444;
+    padding: 15px;
+    border-radius: 10px;
+    font-size: 1.2em;
+    color: #ffd700;
+    font-weight: bold;
+}
+
+#grafico-temperatura {
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+canvas#chartTemperatura {
+    max-height: 400px;
+    width: 100%;
+    height: auto;
+}
