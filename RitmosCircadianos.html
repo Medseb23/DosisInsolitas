@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Ritmos Circadianos</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(to right, #1e3c72, #2a5298);
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+        .container {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            max-width: 400px;
+            width: 100%;
+        }
+        h1 {
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+        label, input, button {
+            display: block;
+            width: 100%;
+            margin-bottom: 15px;
+            font-size: 1em;
+        }
+        input, button {
+            padding: 10px;
+            border-radius: 5px;
+            border: none;
+        }
+        button {
+            background-color: #ffd700;
+            color: #1e3c72;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+        button:hover {
+            background-color: #fff;
+            transform: scale(1.05);
+        }
+        .result {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        .result ul {
+            list-style: none;
+            padding: 0;
+        }
+        .result li {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .info {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            max-width: 600px;
+        }
+        .verde {
+            background-color: #4caf50;
+            color: #fff;
+        }
+        .amarillo {
+            background-color: #ffeb3b;
+            color: #000;
+        }
+        .rojo {
+            background-color: #f44336;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Calculadora de Ritmos Circadianos</h1>
+        <p>Introduce la hora en la que necesitas despertar y te recomendaremos las mejores horas para dormir, basadas en los ciclos del sueño.</p>
+        <label for="wakeUpTime">Hora de Despertar (HH:MM AM/PM)</label>
+        <input type="time" id="wakeUpTime" required>
+        <button onclick="calcularHorasDeSueño()">Calcular Horas de Sueño</button>
+        <div id="result" class="result"></div>
+    </div>
+
+    <div class="info">
+        <h2>¿Qué son los Ritmos Circadianos?</h2>
+        <p>Los ritmos circadianos son ciclos biológicos que regulan nuestros patrones de sueño y vigilia, repitiéndose aproximadamente cada 24 horas. Están influenciados por factores ambientales, como la luz del día y la oscuridad, y ayudan a nuestro cuerpo a saber cuándo es el momento de dormir o estar despierto.</p>
+        <h2>¿Por qué calcular las horas para dormir?</h2>
+        <p>El sueño se divide en ciclos de aproximadamente 90 minutos, que incluyen diferentes etapas como el sueño ligero, profundo y el sueño REM (sueño de movimientos oculares rápidos). Para despertarse sintiéndose descansado, es importante completar ciclos de sueño completos. Despertarse en medio de un ciclo de sueño profundo puede hacer que te sientas cansado y desorientado, incluso si has dormido varias horas.</p>
+        <p>Esta calculadora te ayuda a encontrar las mejores horas para ir a dormir en base a los ciclos de sueño, de manera que puedas despertar al final de un ciclo y sentirte más renovado. Los ciclos de sueño completos mejoran la calidad del descanso y permiten que el cuerpo y la mente se recuperen adecuadamente.</p>
+        <h2>Alternativas de Sueño Respetando el Ritmo Circadiano</h2>
+        <p>Para obtener un descanso óptimo, lo ideal es dormir entre <strong>7 y 8 horas</strong>, lo cual corresponde a completar 5 o 6 ciclos de sueño completos. Estas son las horas recomendadas para dormir si deseas respetar tus ritmos circadianos y maximizar la calidad de tu vigilia:</p>
+        <ul>
+            <li><strong>7.5 horas de sueño</strong> (5 ciclos completos): Esta es una buena cantidad de sueño que permite al cuerpo completar todos los ciclos de sueño necesarios para un descanso adecuado y para sentirse renovado al despertar.</li>
+            <li><strong>9 horas de sueño</strong> (6 ciclos completos): Aunque no siempre es necesario dormir tanto, 9 horas pueden ser ideales si necesitas recuperarte de una fatiga acumulada o si realizaste actividad física intensa.</li>
+        </ul>
+        <h2>Alternativas con Menos Horas de Sueño</h2>
+        <p>Si no puedes dormir entre 7 y 8 horas, todavía puedes optimizar el sueño despertándote al final de un ciclo completo. Estas son algunas opciones con menos horas de sueño, pero que respetan los ciclos circadianos:</p>
+        <ul>
+            <li><strong>6 horas de sueño</strong> (4 ciclos completos): Aunque es menos que lo recomendado, despertar al final de un ciclo de 6 horas es preferible a dormir más tiempo pero interrumpir un ciclo profundo.</li>
+            <li><strong>4.5 horas de sueño</strong> (3 ciclos completos): Esta opción es útil si necesitas una noche corta, pero la calidad de la vigilia no será óptima y podrías sentirte cansado más rápidamente durante el día.</li>
+            <li><strong>3 horas de sueño</strong> (2 ciclos completos): No es lo ideal para una vigilia productiva, pero es mejor que despertarse en medio de un ciclo. Esta opción solo debe considerarse en casos extremos.</li>
+        </ul>
+    </div>
+
+    <script>
+        function calcularHorasDeSueño() {
+            const wakeUpInput = document.getElementById('wakeUpTime').value;
+            if (!wakeUpInput) {
+                alert('Por favor, introduce una hora válida para despertar.');
+                return;
+            }
+
+            const wakeUpTime = new Date(`1970-01-01T${wakeUpInput}`);
+            const ciclosSueño = 90 * 60000; // 90 minutos en milisegundos
+            const resultados = [];
+
+            for (let i = 6; i >= 1; i--) { // Calcula 6 ciclos hacia atrás
+                const sleepTime = new Date(wakeUpTime.getTime() - ciclosSueño * i);
+                const horas = sleepTime.getHours();
+                const minutos = sleepTime.getMinutes().toString().padStart(2, '0');
+                const ampm = horas >= 12 ? 'PM' : 'AM';
+                const horas12 = horas % 12 || 12;
+                const colorClase = i >= 5 ? 'verde' : i >= 3 ? 'amarillo' : 'rojo';
+                resultados.push({ hora: `${horas12}:${minutos} ${ampm}`, clase: colorClase });
+            }
+
+            mostrarResultados(resultados);
+        }
+
+        function mostrarResultados(resultados) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = "<h2>Horas Recomendadas para Dormir</h2><ul>" +
+                resultados.map(resultado => `<li class="${resultado.clase}">${resultado.hora}</li>`).join('') +
+                "</ul>";
+        }
+    </script>
+</body>
+</html>
