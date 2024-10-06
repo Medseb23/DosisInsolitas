@@ -1,49 +1,128 @@
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dosis Insólitas</title>
     <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(to right, #3a1c71, #d76d77, #ffaf7b);
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow-y: auto;
+        }
+        .container {
+            text-align: center;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            max-width: 800px;
+            width: 90%;
+            margin: 20px;
+        }
+        h1 {
+            font-size: 3em;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        p {
+            font-size: 1.2em;
+            margin-bottom: 20px;
+        }
+        nav ul {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+        nav ul li {
+            display: inline;
+        }
+        nav ul li a {
+            text-decoration: none;
+            color: #ffd700;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+        nav ul li a:hover {
+            color: #ffffff;
+        }
+        .boton {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 15px 25px;
+            background-color: #ffd700;
+            color: #3a1c71;
+            text-decoration: none;
+            font-weight: bold;
+            border-radius: 8px;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+        .boton:hover {
+            background-color: #ffffff;
+            transform: scale(1.05);
+        }
+        .contenido {
+            margin: 20px 0;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+        .contenido h3 {
+            margin-top: 0;
+        }
+    </style>
 </head>
 <body>
-    <header>
-        <h1>Dosis Insólitas</h1>
-        <p>Bienvenido a Dosis Insólitas, donde exploramos lo curioso, espiritual y lo mágico del universo. Sumérgete en nuestros contenidos únicos para descubrir más sobre lo desconocido.</p>
-    </header>
+    <div class="container">
+        <header>
+            <h1>Dosis Insólitas</h1>
+            <p>Bienvenido a Dosis Insólitas, donde exploramos lo curioso, espiritual y lo mágico del universo. Sumérgete en nuestros contenidos únicos para descubrir más sobre lo desconocido.</p>
+        </header>
 
-    <nav>
-        <ul>
-            <li><a href="CalendarioLunar">Calendario Lunar</a></li>
-            <li><a href="#">Explorar Más</a></li>
-            <li><a href="#">Contacto</a></li>
-        </ul>
-    </nav>
+        <nav>
+            <ul>
+                <li><a href="#CalendarioLunar">Calendario Lunar</a></li>
+                <li><a href="#contenidos-destacados">Explorar Más</a></li>
+                <li><a href="#">Contacto</a></li>
+            </ul>
+        </nav>
 
-    <main>
-        <section id="calendario-lunar">
-            <h2>Calendario Lunar y Pronóstico Climático</h2>
-            <p>Descubre cómo las fases lunares influyen en nuestras vidas y cómo aprovechar cada fase para tu crecimiento personal.</p>
-            <a href="/calendariolunar" class="boton">Acceder al Calendario Lunar</a>
-        </section>
+        <main>
+            <section id="CalendarioLunar">
+                <h2>Calendario Lunar y Pronóstico Climático</h2>
+                <p>Descubre cómo las fases lunares influyen en nuestras vidas y cómo aprovechar cada fase para tu crecimiento personal.</p>
+                <a href="/CalendarioLunar" class="boton">Acceder al Calendario Lunar</a>
+            </section>
 
-        <section id="contenidos-destacados">
-            <h2>Contenidos Destacados</h2>
-            <div class="contenido">
-                <h3>El Poder de la Luna Llena</h3>
-                <p>Explora cómo la Luna Llena afecta nuestras emociones y cómo aprovechar su energía para la manifestación de deseos.</p>
-                <a href="#">Leer más</a>
-            </div>
-            <div class="contenido">
-                <h3>Conexión Espiritual con la Naturaleza</h3>
-                <p>Aprende prácticas para conectarte con la naturaleza y encontrar paz interior.</p>
-                <a href="#">Leer más</a>
-            </div>
-        </section>
-    </main>
+            <section id="contenidos-destacados">
+                <h2>Contenidos Destacados</h2>
+                <div class="contenido">
+                    <h3>El Poder de la Luna Llena</h3>
+                    <p>Explora cómo la Luna Llena afecta nuestras emociones y cómo aprovechar su energía para la manifestación de deseos.</p>
+                    <a href="#">Leer más</a>
+                </div>
+                <div class="contenido">
+                    <h3>Conexión Espiritual con la Naturaleza</h3>
+                    <p>Aprende prácticas para conectarte con la naturaleza y encontrar paz interior.</p>
+                    <a href="#">Leer más</a>
+                </div>
+            </section>
+        </main>
 
-    <footer>
-        <p>&copy; 2024 Dosis Insólitas. Todos los derechos reservados.</p>
-        <p>Síguenos en TikTok para más contenido curioso y espiritual: <a href="https://www.tiktok.com/@dosisinsolitas" target="_blank">@lasdosisinsolitas</a></p>
-    </footer>
+        <footer>
+            <p>&copy; 2024 Dosis Insólitas. Todos los derechos reservados.</p>
+            <p>Síguenos en TikTok para más contenido curioso y espiritual: <a href="https://www.tiktok.com/@dosisinsolitas" target="_blank">@dosisinsolitas</a></p>
+        </footer>
+    </div>
 </body>
 </html>
