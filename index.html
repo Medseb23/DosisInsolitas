@@ -6,6 +6,7 @@
     <title>Dosis Insólitas</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         body {
             font-family: 'Roboto', sans-serif;
@@ -80,20 +81,41 @@
         .contenido h3 {
             margin-top: 0;
         }
+        .hero {
+            background-image: url('path/to/your-image.jpg');
+            background-size: cover;
+            background-position: center;
+            padding: 60px 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+        }
+        .hero h1 {
+            color: #ffd700;
+            font-size: 4em;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+        }
+        .hero p {
+            color: #ffffff;
+            font-size: 1.5em;
+            margin-top: 15px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>Dosis Insólitas</h1>
-            <p>Bienvenido a Dosis Insólitas, donde exploramos lo curioso, espiritual y lo mágico del universo. Sumérgete en nuestros contenidos únicos para descubrir más sobre lo desconocido.</p>
+            <div class="hero">
+                <h1><i class="fas fa-moon"></i> Dosis Insólitas</h1>
+                <p>Bienvenido a Dosis Insólitas, donde exploramos lo curioso, espiritual y lo mágico del universo.</p>
+                <a href="/CalendarioLunar" class="boton"><i class="fas fa-calendar-alt"></i> Acceder al Calendario Lunar</a>
+            </div>
         </header>
 
         <nav>
             <ul>
-                <li><a href="#CalendarioLunar">Calendario Lunar</a></li>
-                <li><a href="#contenidos-destacados">Explorar Más</a></li>
-                <li><a href="#">Contacto</a></li>
+                <li><a href="#CalendarioLunar"><i class="fas fa-moon"></i> Calendario Lunar</a></li>
+                <li><a href="#contenidos-destacados"><i class="fas fa-compass"></i> Explorar Más</a></li>
+                <li><a href="#"><i class="fas fa-envelope"></i> Contacto</a></li>
             </ul>
         </nav>
 
