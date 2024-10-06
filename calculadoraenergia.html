@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Energía Personal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(to right, #ff7e5f, #feb47b);
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            max-width: 500px;
+            width: 100%;
+        }
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            color: #ff6b6b;
+        }
+        label, input, button {
+            display: block;
+            width: 100%;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+        input, button {
+            padding: 10px;
+            border-radius: 5px;
+            border: 2px solid #ff6b6b;
+        }
+        button {
+            background-color: #ff6b6b;
+            color: #fff;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+        button:hover {
+            background-color: #333;
+            transform: scale(1.05);
+        }
+        .result {
+            background: #ffecd2;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            color: #333;
+        }
+        .tips {
+            background: #ffe0b2;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        .tips h2 {
+            margin-top: 0;
+        }
+        .indicator {
+            width: 100%;
+            height: 15px;
+            border-radius: 5px;
+            margin-bottom: 5px;
+        }
+        .indicator-label {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .green {
+            background-color: #4caf50;
+        }
+        .yellow {
+            background-color: #ffeb3b;
+        }
+        .red {
+            background-color: #f44336;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Calculadora de Energía Personal</h1>
+        <p>Completa los campos a continuación para obtener una evaluación de tu nivel de energía y recibir consejos para mejorarlo.</p>
+        <form id="habitsForm">
+            <label for="sleepHours">Horas de sueño (por noche)</label>
+            <input type="number" id="sleepHours" name="sleepHours" min="1" max="12" required>
+            <div id="sleepIndicator" class="indicator"></div>
+            <div id="sleepIndicatorLabel" class="indicator-label"></div>
+
+            <label for="exercise">Minutos de ejercicio al día</label>
+            <input type="number" id="exercise" name="exercise" min="0" max="180">
+            <div id="exerciseIndicator" class="indicator"></div>
+            <div id="exerciseIndicatorLabel" class="indicator-label"></div>
+
+            <label for="water">Litros de agua consumidos al día</label>
+            <input type="number" id="water" name="water" min="0" max="5" step="0.1">
+            <div id="waterIndicator" class="indicator"></div>
+            <div id="waterIndicatorLabel" class="indicator-label"></div>
+
+            <label for="stress">Nivel de estrés (1-10)</label>
+            <input type="number" id="stress" name="stress" min="1" max="10" required>
+            <div id="stressIndicator" class="indicator"></div>
+            <div id="stressIndicatorLabel" class="indicator-label"></div>
+
+            <button type="button" onclick="calculateEnergy()">Calcular Energía</button>
+        </form>
+        <div id="result" class="result"></div>
+    </div>
+    <div class="tips" id="tips"></div>
+
+    <div class="tips">
+        <h2>Importancia de Cada Aspecto para la Salud y Energía</h2>
+        <ul>
+            <li><strong>Sueño:</strong> Dormir entre 7 y 8 horas por noche es esencial para el funcionamiento cognitivo, la recuperación física y la salud mental. Menos de 5 horas de sueño puede provocar fatiga, dificultades de concentración y un estado de ánimo bajo.</li>
+            <li><strong>Ejercicio:</strong> Hacer ejercicio regularmente, especialmente entre 30 y 60 minutos al día, mejora la circulación, aumenta los niveles de energía y ayuda a reducir el estrés.</li>
+            <li><strong>Hidratación:</strong> Beber al menos 2 litros de agua al día mantiene los niveles de energía, favorece la concentración y regula muchas funciones del cuerpo.</li>
+            <li><strong>Estrés:</strong> El estrés crónico puede agotar los niveles de energía y afectar negativamente la salud física y mental. Mantener niveles bajos de estrés mediante prácticas de relajación es clave para mantener un buen nivel de energía.</li>
+        </ul>
+    </div>
+
+    <script>
+        function calculateEnergy() {
+            const sleep = parseInt(document.getElementById('sleepHours').value) || 0;
+            const exercise = parseInt(document.getElementById('exercise').value) || 0;
+            const water = parseFloat(document.getElementById('water').value) || 0;
+            const stress = parseInt(document.getElementById('stress').value) || 0;
+
+            // Ponderaciones para cada aspecto
+            let energy = 0;
+
+            // Ponderar las horas de sueño
+            if (sleep >= 7) {
+                energy += 30; // Sueño ideal
+                updateIndicator('sleepIndicator', 'green', 'sleepIndicatorLabel', 'Adecuado');
+            } else if (sleep >= 5 && sleep < 7) {
+                energy += 20; // Sueño aceptable
+                updateIndicator('sleepIndicator', 'yellow', 'sleepIndicatorLabel', 'Se puede mejorar');
+            } else if (sleep >= 3 && sleep < 5) {
+                energy += 10; // Sueño insuficiente
+                updateIndicator('sleepIndicator', 'red', 'sleepIndicatorLabel', 'Insuficiente');
+            } else {
+                energy -= 20; // Muy poco sueño, afecta negativamente
+                updateIndicator('sleepIndicator', 'red', 'sleepIndicatorLabel', 'Insuficiente');
+            }
+
+            // Ponderar el ejercicio
+            if (exercise >= 30 && exercise <= 60) {
+                energy += 25; // Ejercicio adecuado
+                updateIndicator('exerciseIndicator', 'green', 'exerciseIndicatorLabel', 'Adecuado');
+            } else if (exercise > 60) {
+                energy += 30; // Ejercicio muy activo
+                updateIndicator('exerciseIndicator', 'green', 'exerciseIndicatorLabel', 'Adecuado');
+            } else if (exercise > 0 && exercise < 30) {
+                energy += 10; // Ejercicio insuficiente
+                updateIndicator('exerciseIndicator', 'yellow', 'exerciseIndicatorLabel', 'Se puede mejorar');
+            } else {
+                energy += 0; // Sin ejercicio, no suma energía
+                updateIndicator('exerciseIndicator', 'red', 'exerciseIndicatorLabel', 'Insuficiente');
+            }
+
+            // Ponderar el consumo de agua
+            if (water >= 2) {
+                energy += 25; // Hidratación adecuada
+                updateIndicator('waterIndicator', 'green', 'waterIndicatorLabel', 'Adecuado');
+            } else if (water >= 1) {
+                energy += 15; // Hidratación moderada
+                updateIndicator('waterIndicator', 'yellow', 'waterIndicatorLabel', 'Se puede mejorar');
+            } else {
+                energy += 5; // Baja hidratación
+                updateIndicator('waterIndicator', 'red', 'waterIndicatorLabel', 'Insuficiente');
+            }
+
+            // Ponderar el nivel de estrés (a menor estrés, mayor energía)
+            if (stress <= 3) {
+                energy += 20; // Bajo nivel de estrés
+                updateIndicator('stressIndicator', 'green', 'stressIndicatorLabel', 'Adecuado');
+            } else if (stress <= 6) {
+                energy += 10; // Estrés moderado
+                updateIndicator('stressIndicator', 'yellow', 'stressIndicatorLabel', 'Se puede mejorar');
+            } else {
+                energy -= 10; // Alto nivel de estrés, afecta negativamente
+                updateIndicator('stressIndicator', 'red', 'stressIndicatorLabel', 'Insuficiente');
+            }
+
+            energy = Math.round(Math.max(0, Math.min(100, energy))); // Limitar el rango entre 0 y 100
+
+            let energyMessage = "";
+            if (energy > 80) {
+                energyMessage = "Tu nivel de energía es excelente. ¡Estás haciendo un gran trabajo manteniendo tu bienestar!";
+            } else if (energy > 50) {
+                energyMessage = "Tu nivel de energía es bueno, pero podrías mejorar algunos hábitos para sentirte aún mejor.";
+            } else {
+                energyMessage = "Tu nivel de energía es bajo. Podrías beneficiarte de algunos cambios en tu rutina diaria.";
+            }
+
+            document.getElementById('result').innerHTML = `<h2>Nivel de Energía: ${energy}%</h2><p>${energyMessage}</p>`;
+            provideTips(energy);
+        }
+
+        function provideTips(energy) {
+            let tips = "";
+            if (energy <= 50) {
+                tips = `
+                    <h2>Consejos para Aumentar tu Energía</h2>
+                    <ul>
+                        <li><strong>Mejora tu Sueño:</strong> Intenta dormir entre 7 y 8 horas cada noche para mejorar la calidad de tu descanso.</li>
+                        <li><strong>Ejercicio Diario:</strong> Realiza al menos 30 minutos de ejercicio al día para mejorar tu circulación y niveles de energía.</li>
+                        <li><strong>Hidrátate:</strong> Beber suficiente agua es crucial para mantener altos niveles de energía. Intenta consumir al menos 2 litros al día.</li>
+                        <li><strong>Reduce el Estrés:</strong> Practica técnicas de relajación como la meditación o la respiración profunda.</li>
+                    </ul>
+                `;
+            } else if (energy <= 80) {
+                tips = `
+                    <h2>Consejos para Mantener tu Energía</h2>
+                    <ul>
+                        <li><strong>Optimiza tu Sueño:</strong> Mantén un horario de sueño regular para mejorar la consistencia de tu descanso.</li>
+                        <li><strong>Actividad Física:</strong> Añade variedad a tu rutina de ejercicio para mantener el interés y mejorar la motivación.</li>
+                    </ul>
+                `;
+            } else {
+                tips = `
+                    <h2>Estás Haciendo un Gran Trabajo</h2>
+                    <p>Continúa con tus hábitos saludables para mantener tu nivel de energía al máximo.</p>
+                `;
+            }
+            document.getElementById('tips').innerHTML = tips;
+        }
+
+        function updateIndicator(elementId, color, labelId, labelText) {
+            const indicator = document.getElementById(elementId);
+            const label = document.getElementById(labelId);
+            if (indicator) {
+                indicator.className = `indicator ${color}`;
+            }
+            if (label) {
+                label.textContent = labelText;
+            }
+        }
+    </script>
+</body>
+</html>
