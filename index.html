@@ -60,7 +60,10 @@
             color: #3a1c71;
             transform: scale(1.05);
         }
-        .article-section {
+        .article-gallery {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
             text-align: left;
             background: rgba(255, 255, 255, 0.1);
             padding: 20px;
@@ -68,16 +71,29 @@
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
             margin-bottom: 40px;
         }
-        .article {
-            margin-bottom: 20px;
+        .article-card {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
         }
-        .article h2 {
+        .article-card h3 {
             color: #ffd700;
-            font-size: 2em;
+            font-size: 1.5em;
+            margin-bottom: 10px;
         }
-        .article p {
+        .article-card p {
             font-size: 1em;
             line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        .article-card a {
+            color: #ffd700;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .article-card a:hover {
+            text-decoration: underline;
         }
         footer {
             margin-top: 40px;
@@ -115,18 +131,26 @@
             <a href="https://www.tiktok.com/@lasdosisinsolitas" target="_blank" class="link"><i class="fab fa-tiktok"></i> Síguenos en TikTok</a>
             <a href="https://www.redbubble.com/es/people/dosisinsolitas/shop?asc=u" target="_blank" class="link"><i class="fas fa-store"></i> Tienda en Redbubble</a>
         </div>
-        <section class="article-section">
-            <div class="article">
-                <h2>La Influencia de la Luna Llena en Nuestras Emociones</h2>
-                <p>La Luna Llena ha sido asociada durante siglos con el comportamiento humano y las emociones. Se cree que su energía puede amplificar nuestras emociones, tanto positivas como negativas, y tiene un efecto directo en nuestro estado mental. Descubre cómo la Luna Llena podría afectar tu vida diaria y qué hacer para aprovechar al máximo su energía en nuestro artículo completo.</p>
+        <section class="article-gallery">
+            <div class="article-card">
+                <h3>La Influencia de la Luna Llena en Nuestras Emociones</h3>
+                <p>La Luna Llena ha sido asociada durante siglos con el comportamiento humano y las emociones. Se cree que su energía puede amplificar nuestras emociones, tanto positivas como negativas...</p>
+                <a href="https://dosisinsolitas.com/articulos/luna-llena-emociones">Leer más</a>
             </div>
-            <div class="article">
-                <h2>Cómo Mejorar el Descanso Respetando los Ciclos Circadianos</h2>
-                <p>Los ciclos circadianos son fundamentales para nuestro bienestar general. Dormir alineado con estos ciclos te permite sentirte más descansado y energético. Aprende más sobre cómo respetar estos ciclos y cómo nuestra calculadora de ritmos circadianos puede ayudarte a mejorar la calidad de tu sueño.</p>
+            <div class="article-card">
+                <h3>Cómo Mejorar el Descanso Respetando los Ciclos Circadianos</h3>
+                <p>Los ciclos circadianos son fundamentales para nuestro bienestar general. Dormir alineado con estos ciclos te permite sentirte más descansado y energético...</p>
+                <a href="https://dosisinsolitas.com/articulos/ciclos-circadianos">Leer más</a>
             </div>
-            <div class="article">
-                <h2>El Poder de la Meditación Durante la Luna Nueva</h2>
-                <p>La Luna Nueva es el momento perfecto para establecer nuevas intenciones y practicar la meditación. En este artículo, te mostramos cómo la meditación durante esta fase lunar puede ayudarte a manifestar tus deseos y conectar con tu propósito más profundo.</p>
+            <div class="article-card">
+                <h3>El Poder de la Meditación Durante la Luna Nueva</h3>
+                <p>La Luna Nueva es el momento perfecto para establecer nuevas intenciones y practicar la meditación. En este artículo, te mostramos cómo la meditación durante esta fase lunar puede ayudarte...</p>
+                <a href="https://dosisinsolitas.com/articulos/meditacion-luna-nueva">Leer más</a>
+            </div>
+            <div class="article-card">
+                <h3>Rituales Espirituales para Conectar con la Naturaleza</h3>
+                <p>Aprender a conectar con la naturaleza a través de rituales espirituales puede ser una herramienta poderosa para mejorar el bienestar personal...</p>
+                <a href="https://dosisinsolitas.com/articulos/rituales-naturaleza">Leer más</a>
             </div>
         </section>
         <footer>
