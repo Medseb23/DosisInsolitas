@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Espiral de Fibonacci Relajante</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* CSS */
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: rgb(255, 0, 0); /* Color inicial (ansiedad) */
+        }
+
+        #canvas {
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    <script>
+        // JavaScript
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+
+        let width, height;
+
+        function resizeCanvas() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+            drawSpiral();
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        // Función para dibujar la espiral adaptativa
+        function drawSpiral() {
+            ctx.clearRect(0, 0, width, height);
+            ctx.strokeStyle = '#FFFFFF';
+            ctx.lineWidth = 5;
+
+            const centerX = width / 2;
+            const centerY = height / 2;
+            const maxRadius = Math.min(width, height) / 2 - 10; // Radio máximo ajustado al tamaño de la pantalla
+            const numberOfTurns = 6; // Número de vueltas de la espiral
+            const totalSteps = 2000;
+
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY);
+
+            for (let i = 0; i <= totalSteps; i++) {
+                let t = i / totalSteps; // t va de 0 a 1
+                let angle = t * numberOfTurns * 2 * Math.PI; // Ángulo total basado en el número de vueltas
+                let radius = t * maxRadius;
+
+                let x = centerX + radius * Math.cos(angle);
+                let y = centerY + radius * Math.sin(angle);
+                ctx.lineTo(x, y);
+            }
+
+            ctx.stroke();
+        }
+
+        // Variables para el seguimiento del progreso
+        let totalLength = 2000;
+        let currentLength = 0;
+        let isTouching = false;
+
+        // Evento para detectar el movimiento del mouse o toque
+        function onMove(event) {
+            let x, y;
+            if (event.touches) {
+                x = event.touches[0].clientX;
+                y = event.touches[0].clientY;
+            } else {
+                x = event.clientX;
+                y = event.clientY;
+            }
+
+            const pixel = ctx.getImageData(x, y, 1, 1).data;
+            // Verificamos si el usuario está sobre la línea blanca
+            if (pixel[0] === 255 && pixel[1] === 255 && pixel[2] === 255) {
+                if (!isTouching) isTouching = true;
+                currentLength += 1;
+
+                // Calculamos el progreso
+                let progress = currentLength / (totalLength / 2);
+                if (progress > 1) progress = 1;
+
+                // Cambiamos el color de fondo gradualmente
+                const red = Math.floor(255 - 255 * progress);
+                const green = Math.floor(255 * progress);
+                document.body.style.backgroundColor = `rgb(${red}, ${green}, 0)`;
+            } else {
+                isTouching = false;
+            }
+        }
+
+        canvas.addEventListener('mousemove', onMove);
+        canvas.addEventListener('touchmove', onMove);
+    </script>
+</body>
+</html>
