@@ -18,14 +18,28 @@
             top: 0;
             left: 0;
         }
+
+        /* Estilo para el indicador visual */
+        #indicator {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            margin: -10px 0 0 -10px; /* Centra el indicador en el cursor */
+            border-radius: 50%;
+            background-color: rgba(255, 255, 0, 0.8); /* Amarillo semi-transparente */
+            pointer-events: none; /* No interfiere con eventos del mouse */
+            display: none; /* Oculto por defecto */
+        }
     </style>
 </head>
 <body>
     <canvas id="canvas"></canvas>
+    <div id="indicator"></div> <!-- Indicador visual -->
     <script>
         // JavaScript
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
+        const indicator = document.getElementById('indicator');
 
         let width, height;
 
@@ -74,12 +88,14 @@
         // Evento para detectar el movimiento del mouse o toque
         function onMove(event) {
             let x, y;
-            if (event.touches) {
+            if (event.touches && event.touches.length > 0) {
                 x = event.touches[0].clientX;
                 y = event.touches[0].clientY;
-            } else {
+            } else if (event.clientX !== undefined && event.clientY !== undefined) {
                 x = event.clientX;
                 y = event.clientY;
+            } else {
+                return;
             }
 
             const pixel = ctx.getImageData(x, y, 1, 1).data;
@@ -87,6 +103,11 @@
             if (pixel[0] === 255 && pixel[1] === 255 && pixel[2] === 255) {
                 if (!isTouching) isTouching = true;
                 currentLength += 1;
+
+                // Mostrar el indicador en la posición del cursor
+                indicator.style.left = x + 'px';
+                indicator.style.top = y + 'px';
+                indicator.style.display = 'block';
 
                 // Calculamos el progreso
                 let progress = currentLength / (totalLength / 2);
@@ -98,11 +119,14 @@
                 document.body.style.backgroundColor = `rgb(${red}, ${green}, 0)`;
             } else {
                 isTouching = false;
+                // Ocultar el indicador cuando no está sobre la línea
+                indicator.style.display = 'none';
             }
         }
 
         canvas.addEventListener('mousemove', onMove);
         canvas.addEventListener('touchmove', onMove);
+        canvas.addEventListener('touchstart', onMove); // Para capturar toques iniciales
     </script>
 </body>
 </html>
