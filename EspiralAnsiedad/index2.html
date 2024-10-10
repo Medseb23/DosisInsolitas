@@ -2,14 +2,14 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Espiral de Fibonacci Relajante</title>
+    <title>Espiral de Fibonacci Relajante con Sonido</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         /* CSS */
         body {
             margin: 0;
             overflow: hidden;
-            background-color: rgb(255, 0, 0); /* Color inicial (ansiedad) */
+            background-color: rgb(255, 0, 0); /* Color inicial (rojo puro) */
         }
 
         #canvas {
@@ -22,13 +22,30 @@
         /* Estilo para el indicador visual */
         #indicator {
             position: absolute;
-            width: 20px;
-            height: 20px;
-            margin: -10px 0 0 -10px; /* Centra el indicador en el cursor */
+            width: 40px;
+            height: 40px;
+            margin: -20px 0 0 -20px; /* Centra el indicador en el cursor */
             border-radius: 50%;
-            background-color: rgba(255, 255, 0, 0.8); /* Amarillo semi-transparente */
+            background: radial-gradient(circle, rgba(255, 255, 0, 0.8) 0%, rgba(255, 255, 0, 0) 60%);
             pointer-events: none; /* No interfiere con eventos del mouse */
             display: none; /* Oculto por defecto */
+            animation: pulse 1s infinite;
+        }
+
+        /* Animación de pulso */
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.5);
+                opacity: 0.5;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
         }
     </style>
 </head>
@@ -60,7 +77,7 @@
 
             const centerX = width / 2;
             const centerY = height / 2;
-            const maxRadius = Math.min(width, height) / 2 - 10; // Radio máximo ajustado al tamaño de la pantalla
+            const maxRadius = Math.min(width, height) / 2 - 20; // Radio máximo ajustado al tamaño de la pantalla
             const numberOfTurns = 6; // Número de vueltas de la espiral
             const totalSteps = 2000;
 
@@ -85,6 +102,48 @@
         let currentLength = 0;
         let isTouching = false;
 
+        // Configuración del audio
+        let audioContext = null;
+        let oscillator = null;
+        let gainNode = null;
+
+        // Función para iniciar el contexto de audio en respuesta a una interacción del usuario
+        function initAudioContext() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function startSound() {
+            if (!audioContext) {
+                return;
+            }
+
+            // Requerido por algunos navegadores para reanudar el contexto de audio
+            if (audioContext.state === 'suspended') {
+                audioContext.resume();
+            }
+
+            oscillator = audioContext.createOscillator();
+            oscillator.type = 'sine'; // Onda sinusoidal para un tono relajante
+
+            // Ganancia para controlar el volumen
+            gainNode = audioContext.createGain();
+            gainNode.gain.value = 0.1; // Volumen bajo para que sea relajante
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            oscillator.start();
+        }
+
+        function stopSound() {
+            if (oscillator) {
+                oscillator.stop();
+                oscillator.disconnect();
+                oscillator = null;
+            }
+        }
+
         // Evento para detectar el movimiento del mouse o toque
         function onMove(event) {
             let x, y;
@@ -98,10 +157,16 @@
                 return;
             }
 
+            // Iniciar el contexto de audio en respuesta al primer toque o movimiento
+            initAudioContext();
+
             const pixel = ctx.getImageData(x, y, 1, 1).data;
             // Verificamos si el usuario está sobre la línea blanca
             if (pixel[0] === 255 && pixel[1] === 255 && pixel[2] === 255) {
-                if (!isTouching) isTouching = true;
+                if (!isTouching) {
+                    isTouching = true;
+                    startSound(); // Iniciar el sonido al tocar la espiral
+                }
                 currentLength += 1;
 
                 // Mostrar el indicador en la posición del cursor
@@ -113,12 +178,25 @@
                 let progress = currentLength / (totalLength / 2);
                 if (progress > 1) progress = 1;
 
-                // Cambiamos el color de fondo gradualmente
-                const red = Math.floor(255 - 255 * progress);
-                const green = Math.floor(255 * progress);
-                document.body.style.backgroundColor = `rgb(${red}, ${green}, 0)`;
+                // Cambiamos el color de fondo gradualmente sin saltos
+                const red = 255; // Rojo constante
+                const green = 0; // Verde constante en 0
+                const blue = Math.floor(255 * progress); // De 0 a 255
+
+                document.body.style.backgroundColor = `rgb(${red}, ${green}, ${blue})`;
+
+                // Actualizamos la frecuencia del sonido basado en el progreso
+                if (oscillator) {
+                    let minFreq = 220; // Frecuencia mínima (A3)
+                    let maxFreq = 880; // Frecuencia máxima (A5)
+                    let frequency = minFreq + (maxFreq - minFreq) * progress;
+                    oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
+                }
             } else {
-                isTouching = false;
+                if (isTouching) {
+                    isTouching = false;
+                    stopSound(); // Detener el sonido al salir de la espiral
+                }
                 // Ocultar el indicador cuando no está sobre la línea
                 indicator.style.display = 'none';
             }
@@ -126,7 +204,31 @@
 
         canvas.addEventListener('mousemove', onMove);
         canvas.addEventListener('touchmove', onMove);
-        canvas.addEventListener('touchstart', onMove); // Para capturar toques iniciales
+
+        // Iniciar el contexto de audio al tocar la pantalla
+        canvas.addEventListener('mousedown', initAudioContext);
+        canvas.addEventListener('touchstart', function(event) {
+            initAudioContext();
+            onMove(event); // Para capturar toques iniciales
+        });
+
+        // Detener el sonido si el usuario levanta el dedo o sale del canvas
+        canvas.addEventListener('mouseout', stopSound);
+        canvas.addEventListener('touchend', stopSound);
+        canvas.addEventListener('touchcancel', stopSound);
+
+        // Prevenir el comportamiento por defecto en iOS que podría interferir
+        document.body.addEventListener('touchstart', function(e) {
+            if (e.target == canvas) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+
+        document.body.addEventListener('touchend', function(e) {
+            if (e.target == canvas) {
+                e.preventDefault();
+            }
+        }, { passive: false });
     </script>
 </body>
 </html>
