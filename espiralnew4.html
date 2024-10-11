@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Espiral de Fibonacci Relajante con Zona Sensible Ampliada</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* CSS */
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: rgb(255, 0, 0); /* Color inicial (rojo puro) */
+        }
+
+        #canvas {
+            display: none; /* Oculto hasta que se inicie */
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        /* Estilo para el indicador visual */
+        #indicator {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            margin: -20px 0 0 -20px; /* Centra el indicador en el cursor */
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 255, 0, 0.8) 0%, rgba(255, 255, 0, 0) 60%);
+            pointer-events: none; /* No interfiere con eventos del mouse */
+            display: none; /* Oculto por defecto */
+            animation: pulse 1s infinite;
+        }
+
+        /* Estilo para el botón de inicio */
+        #startButton {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px 40px;
+            font-size: 24px;
+            background-color: #ffffff;
+            color: #000000;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        /* Animación de pulso */
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.5);
+                opacity: 0.5;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    <div id="indicator"></div> <!-- Indicador visual -->
+    <button id="startButton">Iniciar</button>
+    <script>
+        // JavaScript
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const indicator = document.getElementById('indicator');
+        const startButton = document.getElementById('startButton');
+
+        let width, height;
+        let spiralPoints = []; // Almacenar los puntos de la espiral
+
+        function resizeCanvas() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+            drawSpiral();
+        }
+
+        // Función para dibujar la espiral adaptativa y almacenar sus puntos
+        function drawSpiral() {
+            ctx.clearRect(0, 0, width, height);
+            ctx.strokeStyle = '#FFFFFF';
+            ctx.lineWidth = 5;
+
+            spiralPoints = []; // Reiniciar los puntos de la espiral
+
+            const centerX = width / 2;
+            const centerY = height / 2;
+            const maxRadius = Math.min(width, height) / 2 - 20; // Radio máximo ajustado al tamaño de la pantalla
+            const numberOfTurns = 6; // Número de vueltas de la espiral
+            const totalSteps = 2000;
+
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY);
+
+            for (let i = 0; i <= totalSteps; i++) {
+                let t = i / totalSteps; // t va de 0 a 1
+                let angle = t * numberOfTurns * 2 * Math.PI; // Ángulo total basado en el número de vueltas
+                let radius = t * maxRadius;
+
+                let x = centerX + radius * Math.cos(angle);
+                let y = centerY + radius * Math.sin(angle);
+
+                spiralPoints.push({ x: x, y: y }); // Almacenar el punto
+
+                ctx.lineTo(x, y);
+            }
+
+            ctx.stroke();
+        }
+
+        // Variables para el seguimiento del progreso
+        let totalLength = 2000;
+        let currentLength = 0;
+
+        // Configuración del audio
+        let audioContext = null;
+
+        function initAudio() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+                // Requerido por algunos navegadores para reanudar el contexto de audio
+                if (audioContext.state === 'suspended') {
+                    audioContext.resume();
+                }
+            }
+        }
+
+        function startOscillator() {
+            // Crear oscilador y nodos de audio
+            const oscillator = audioContext.createOscillator();
+            oscillator.type = 'sine'; // Onda sinusoidal para un tono relajante
+
+            const gainNode = audioContext.createGain();
+            gainNode.gain.value = 0.1; // Volumen bajo para que sea relajante
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+
+            oscillator.start();
+
+            return { oscillator, gainNode };
+        }
+
+        let oscillatorNode = null; // Almacena el oscilador activo
+
+        function startInteraction() {
+            // Ocultar el botón de inicio y mostrar el canvas
+            startButton.style.display = 'none';
+            canvas.style.display = 'block';
+
+            // Ajustar el tamaño del canvas y dibujar la espiral
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+
+            // Iniciar el contexto de audio
+            initAudio();
+        }
+
+        function stopSound() {
+            if (oscillatorNode) {
+                oscillatorNode.oscillator.stop();
+                oscillatorNode.oscillator.disconnect();
+                oscillatorNode = null;
+            }
+        }
+
+        // Función para verificar si el cursor está cerca de la espiral
+        function isCursorNearSpiral(x, y) {
+            let threshold = 40; // Distancia en píxeles para considerar que está "sobre" la espiral
+            for (let i = 0; i < spiralPoints.length; i++) {
+                let dx = x - spiralPoints[i].x;
+                let dy = y - spiralPoints[i].y;
+                let distance = Math.sqrt(dx * dx + dy * dy);
+                if (distance <= threshold) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        // Evento para detectar el movimiento del mouse o toque
+        function onMove(event) {
+            let x, y;
+            if (event.touches && event.touches.length > 0) {
+                x = event.touches[0].clientX;
+                y = event.touches[0].clientY;
+            } else if (event.clientX !== undefined && event.clientY !== undefined) {
+                x = event.clientX;
+                y = event.clientY;
+            } else {
+                return;
+            }
+
+            // Verificar si el punto está cerca de la espiral
+            if (isCursorNearSpiral(x, y)) {
+                currentLength += 1;
+
+                // Mostrar el indicador en la posición del cursor
+                indicator.style.left = x + 'px';
+                indicator.style.top = y + 'px';
+                indicator.style.display = 'block';
+
+                // Calculamos el progreso
+                let progress = currentLength / (totalLength / 2);
+                if (progress > 1) progress = 1;
+
+                // Cambiamos el color de fondo gradualmente sin saltos
+                const red = 255; // Rojo constante
+                const green = 0; // Verde constante en 0
+                const blue = Math.floor(255 * progress); // De 0 a 255
+
+                document.body.style.backgroundColor = `rgb(${red}, ${green}, ${blue})`;
+
+                // Iniciar el oscilador si no está activo
+                if (!oscillatorNode) {
+                    oscillatorNode = startOscillator();
+                }
+
+                // Actualizamos la frecuencia del sonido basado en el progreso
+                if (oscillatorNode && oscillatorNode.oscillator) {
+                    let minFreq = 220; // Frecuencia mínima (A3)
+                    let maxFreq = 880; // Frecuencia máxima (A5)
+                    let frequency = minFreq + (maxFreq - minFreq) * progress;
+                    oscillatorNode.oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
+                }
+            } else {
+                // Ocultar el indicador cuando no está sobre la espiral
+                indicator.style.display = 'none';
+
+                // Detener el sonido si se estaba reproduciendo
+                stopSound();
+            }
+        }
+
+        canvas.addEventListener('mousemove', onMove);
+        canvas.addEventListener('touchmove', onMove, { passive: false });
+
+        // Iniciar el oscilador al tocar la pantalla en la espiral
+        canvas.addEventListener('touchstart', onMove, { passive: false });
+        canvas.addEventListener('mousedown', onMove);
+
+        // Detener el sonido si el usuario levanta el dedo o sale del canvas
+        canvas.addEventListener('mouseup', function() {
+            stopSound();
+        });
+
+        canvas.addEventListener('touchend', function() {
+            stopSound();
+        }, { passive: false });
+
+        canvas.addEventListener('touchcancel', function() {
+            stopSound();
+        }, { passive: false });
+
+        // Prevenir el comportamiento por defecto en iOS que podría interferir
+        document.body.addEventListener('touchstart', function(e) {
+            if (e.target == canvas) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+
+        document.body.addEventListener('touchend', function(e) {
+            if (e.target == canvas) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+
+        // Agregar evento al botón de inicio
+        startButton.addEventListener('click', startInteraction);
+    </script>
+</body>
+</html>
