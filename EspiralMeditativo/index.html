@@ -71,8 +71,8 @@
             cursor: pointer;
         }
 
-        /* Estilo para la imagen final */
-        #paradiseImage {
+        /* Estilo para el video final */
+        #spiralVideo {
             display: none;
             position: absolute;
             top: 0;
@@ -80,15 +80,6 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            /* La animación se añadirá mediante una clase */
-            /* transition de la opacidad */
-            transition: opacity 5s; /* Duración por defecto del fade out */
-        }
-
-        /* Clase para la animación hipnótica */
-        .hypnotic {
-            animation: hypnotic 30s infinite;
-            animation-timing-function: ease-in-out;
         }
 
         /* Estilo para la pantalla de agradecimiento */
@@ -146,36 +137,11 @@
                 opacity: 1;
             }
         }
-
-        /* Animación hipnótica para la imagen final */
-        @keyframes hypnotic {
-            0% {
-                filter: brightness(100%) contrast(100%);
-            }
-            25% {
-                filter: brightness(50%) contrast(200%);
-            }
-            50% {
-                filter: brightness(100%) contrast(100%);
-            }
-            75% {
-                filter: brightness(150%) contrast(200%);
-            }
-            100% {
-                filter: brightness(100%) contrast(100%);
-            }
-        }
-
-        /* Clase para mostrar la pantalla de agradecimiento */
-        .show-thank-you {
-            opacity: 1;
-            display: block;
-        }
     </style>
 </head>
 <body>
     <canvas id="canvas"></canvas>
-    <img id="paradiseImage" src="paradise.jpg" alt="Paraíso"> <!-- Imagen del paraíso -->
+    <video id="spiralVideo" src="animespiralow.mp4" autoplay loop muted></video> <!-- Video en bucle -->
     <div id="indicator"></div> <!-- Indicador visual -->
 
     <!-- Contenedor del mensaje de bienvenida -->
@@ -210,7 +176,7 @@
         const ctx = canvas.getContext('2d');
         const indicator = document.getElementById('indicator');
         const startButton = document.getElementById('startButton');
-        const paradiseImage = document.getElementById('paradiseImage');
+        const spiralVideo = document.getElementById('spiralVideo');
         const welcomeMessage = document.getElementById('welcomeMessage');
         const thankYouScreen = document.getElementById('thankYouScreen');
         const volverButton = document.getElementById('volverButton');
@@ -226,94 +192,6 @@
             drawProgress(); // Redibujar el progreso al redimensionar
         }
 
-        // Función para dibujar la espiral adaptativa y almacenar sus puntos
-        function drawSpiral() {
-            ctx.clearRect(0, 0, width, height);
-            ctx.strokeStyle = '#FFFFFF';
-            ctx.lineWidth = 5;
-
-            spiralPoints = []; // Reiniciar los puntos de la espiral
-
-            const centerX = width / 2;
-            const centerY = height / 2;
-            const maxRadius = Math.min(width, height) / 2 - 20; // Radio máximo ajustado al tamaño de la pantalla
-            const numberOfTurns = 6; // Número de vueltas de la espiral
-            const totalSteps = 2000;
-            const angleOffset = 0; // Para ajustar la rotación inicial de la espiral
-
-            ctx.beginPath();
-            ctx.moveTo(centerX, centerY);
-
-            for (let i = 0; i <= totalSteps; i++) {
-                let t = i / totalSteps; // t va de 0 a 1
-                let angle = t * numberOfTurns * 2 * Math.PI + angleOffset; // Ángulo total basado en el número de vueltas
-                let radius = t * maxRadius;
-
-                let x = centerX + radius * Math.cos(angle);
-                let y = centerY + radius * Math.sin(angle);
-
-                spiralPoints.push({ x: x, y: y, progress: t }); // Almacenar el punto y su progreso
-
-                ctx.lineTo(x, y);
-            }
-
-            ctx.stroke();
-        }
-
-        // Variables para el seguimiento del progreso
-        let currentIndex = 0; // Índice del punto actual en la espiral
-        let progressPoints = []; // Puntos recorridos por el usuario
-
-        // Configuración del audio
-        let audioContext = null;
-        let lastBaseFrequency = 0; // Para almacenar la última frecuencia base alcanzada
-
-        function initAudio() {
-            if (!audioContext) {
-                audioContext = new (window.AudioContext || window.webkitAudioContext)();
-
-                // Requerido por algunos navegadores para reanudar el contexto de audio
-                if (audioContext.state === 'suspended') {
-                    audioContext.resume();
-                }
-            }
-        }
-
-        function startBinauralOscillators() {
-            // Crear osciladores y nodos de audio para ambos canales
-            const leftOscillator = audioContext.createOscillator();
-            const rightOscillator = audioContext.createOscillator();
-            leftOscillator.type = 'sine';
-            rightOscillator.type = 'sine';
-
-            const leftGain = audioContext.createGain();
-            const rightGain = audioContext.createGain();
-            leftGain.gain.value = 0.1;
-            rightGain.gain.value = 0.1;
-
-            const leftPanner = audioContext.createStereoPanner();
-            leftPanner.pan.setValueAtTime(-1, audioContext.currentTime); // Izquierda total
-
-            const rightPanner = audioContext.createStereoPanner();
-            rightPanner.pan.setValueAtTime(1, audioContext.currentTime); // Derecha total
-
-            // Conectar los nodos
-            leftOscillator.connect(leftGain).connect(leftPanner).connect(audioContext.destination);
-            rightOscillator.connect(rightGain).connect(rightPanner).connect(audioContext.destination);
-
-            leftOscillator.start();
-            rightOscillator.start();
-
-            return {
-                leftOscillator: leftOscillator,
-                rightOscillator: rightOscillator,
-                leftGain: leftGain,
-                rightGain: rightGain
-            };
-        }
-
-        let oscillatorNodes = null; // Almacena los osciladores activos
-
         function startInteraction() {
             // Leer el tiempo de meditación seleccionado
             const selectedTime = document.querySelector('input[name="meditationTime"]:checked').value;
@@ -326,269 +204,18 @@
             // Ajustar el tamaño del canvas y dibujar la espiral
             resizeCanvas();
             window.addEventListener('resize', resizeCanvas);
-
-            // Iniciar el contexto de audio
-            initAudio();
         }
 
-        function stopSound() {
-            if (oscillatorNodes) {
-                oscillatorNodes.leftOscillator.stop();
-                oscillatorNodes.rightOscillator.stop();
-                oscillatorNodes.leftOscillator.disconnect();
-                oscillatorNodes.rightOscillator.disconnect();
-                oscillatorNodes = null;
-            }
-        }
-
-        // Ajustamos el umbral y el rango de adelantamiento
-        let threshold = 60; // Puedes ajustar este valor según prefieras
-        let lookAheadRange = 15; // Número de puntos futuros a considerar
-
-        // Modificamos la función isCursorNearCurrentPoint
-        function isCursorNearCurrentPoint(x, y) {
-            if (currentIndex >= spiralPoints.length) return false;
-
-            for (let i = currentIndex; i < currentIndex + lookAheadRange && i < spiralPoints.length; i++) {
-                let point = spiralPoints[i];
-                let dx = x - point.x;
-                let dy = y - point.y;
-                let distance = Math.sqrt(dx * dx + dy * dy);
-
-                if (distance <= threshold) {
-                    // Añadir los puntos intermedios al progreso
-                    for (let j = currentIndex; j <= i; j++) {
-                        progressPoints.push(spiralPoints[j]);
-                    }
-                    // Actualizamos currentIndex al punto alcanzado
-                    currentIndex = i + 1;
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        // Función para dibujar el progreso en amarillo
-        function drawProgress() {
-            if (progressPoints.length > 1) {
-                ctx.strokeStyle = '#FFFF00'; // Amarillo
-                ctx.lineWidth = 5;
-
-                ctx.beginPath();
-                ctx.moveTo(progressPoints[0].x, progressPoints[0].y);
-
-                for (let i = 1; i < progressPoints.length; i++) {
-                    ctx.lineTo(progressPoints[i].x, progressPoints[i].y);
-                }
-
-                ctx.stroke();
-            }
-        }
-
-        // Evento para detectar el movimiento del mouse o toque
-        function onMove(event) {
-            let x, y;
-            if (event.touches && event.touches.length > 0) {
-                x = event.touches[0].clientX;
-                y = event.touches[0].clientY;
-            } else if (event.clientX !== undefined && event.clientY !== undefined) {
-                x = event.clientX;
-                y = event.clientY;
-            } else {
-                return;
-            }
-
-            // Verificar si el punto está cerca del punto actual o futuro en la espiral
-            if (isCursorNearCurrentPoint(x, y)) {
-                // Dibujar el progreso
-                drawProgress();
-
-                // Mostrar el indicador en la posición del cursor
-                indicator.style.left = x + 'px';
-                indicator.style.top = y + 'px';
-                indicator.style.display = 'block';
-
-                // Obtener el progreso basado en el índice actual
-                let progress = spiralPoints[Math.max(0, currentIndex - 1)].progress;
-
-                // Cambiar el color de fondo gradualmente
-                let colorProgress = progress; // Usamos el progreso obtenido de la espiral
-
-                // Transición de rojo a blanco
-                const red = Math.floor(255);
-                const green = Math.floor(0 + 255 * colorProgress);
-                const blue = Math.floor(0 + 255 * colorProgress);
-
-                document.body.style.backgroundColor = `rgb(${red}, ${green}, ${blue})`;
-
-                // Iniciar los osciladores binaurales si no están activos
-                if (!oscillatorNodes) {
-                    oscillatorNodes = startBinauralOscillators();
-                }
-
-                // Actualizamos las frecuencias de los osciladores basado en el progreso
-                if (oscillatorNodes) {
-                    let minFreq = 220; // Frecuencia mínima (A3)
-                    let maxFreq = 880; // Frecuencia máxima (A5)
-                    let baseFrequency = minFreq + (maxFreq - minFreq) * colorProgress;
-                    lastBaseFrequency = baseFrequency; // Guardar la última frecuencia base
-                    let thetaDifference = 6; // Diferencia constante en Hz (theta)
-
-                    oscillatorNodes.leftOscillator.frequency.setValueAtTime(baseFrequency, audioContext.currentTime);
-                    oscillatorNodes.rightOscillator.frequency.setValueAtTime(baseFrequency + thetaDifference, audioContext.currentTime);
-                }
-
-                // Si el usuario ha alcanzado el final de la espiral
-                if (currentIndex >= spiralPoints.length) {
-                    // Mostrar la imagen del paraíso
-                    paradiseImage.style.display = 'block';
-                    paradiseImage.classList.add('hypnotic');
-                    paradiseImage.style.opacity = 1; // Asegurar que la opacidad esté al máximo
-                    canvas.style.display = 'none';
-                    indicator.style.display = 'none';
-
-                    // Detener el sonido actual
-                    stopSound();
-
-                    // Reproducir el tono aumentado a la cuarta, dos octavas más bajas
-                    playFourthInterval(lastBaseFrequency);
-                }
-            } else {
-                // Ocultar el indicador cuando no está siguiendo el camino correcto
-                indicator.style.display = 'none';
-
-                // Detener el sonido si se estaba reproduciendo
-                stopSound();
-            }
-        }
-
-        // Función para reproducir el intervalo de cuarta, dos octavas más bajo, al finalizar
-        function playFourthInterval(baseFrequency) {
-            if (!audioContext) return;
-
-            // Calcular la frecuencia de la cuarta justa (ratio 4:3)
-            let fourthFrequency = baseFrequency * (4 / 3);
-
-            // Reducir dos octavas (dividir la frecuencia por 4)
-            fourthFrequency = fourthFrequency / 4;
-
-            // Crear osciladores para ambos canales
-            const leftOscillator = audioContext.createOscillator();
-            const rightOscillator = audioContext.createOscillator();
-            leftOscillator.type = 'sine';
-            rightOscillator.type = 'sine';
-
-            // Mantener la diferencia theta
-            const thetaDifference = 6; // Diferencia en Hz
-            leftOscillator.frequency.setValueAtTime(fourthFrequency, audioContext.currentTime);
-            rightOscillator.frequency.setValueAtTime(fourthFrequency + thetaDifference, audioContext.currentTime);
-
-            // Crear nodos de paneo
-            const leftPanner = audioContext.createStereoPanner();
-            leftPanner.pan.setValueAtTime(-1, audioContext.currentTime); // Izquierda total
-
-            const rightPanner = audioContext.createStereoPanner();
-            rightPanner.pan.setValueAtTime(1, audioContext.currentTime); // Derecha total
-
-            // Crear nodos de ganancia
-            const leftGain = audioContext.createGain();
-            const rightGain = audioContext.createGain();
-            leftGain.gain.value = 0.1;
-            rightGain.gain.value = 0.1;
-
-            // Conectar osciladores a los paneos y ganancias
-            leftOscillator.connect(leftGain).connect(leftPanner).connect(audioContext.destination);
-            rightOscillator.connect(rightGain).connect(rightPanner).connect(audioContext.destination);
-
-            // Iniciar los osciladores
-            leftOscillator.start();
-            rightOscillator.start();
-
-            // Duraciones
-            const meditationDuration = meditationTime * 60; // en segundos
-            const fadeOutDuration = 5; // Duración del fade out en segundos
-
-            // Programar el desvanecimiento del volumen y la pantalla al finalizar
-            setTimeout(function() {
-                fadeOutSound(leftGain, rightGain, fadeOutDuration);
-                fadeOutImage(fadeOutDuration);
-            }, (meditationDuration - fadeOutDuration) * 1000); // Comenzar el fade out 5 segundos antes del final
-
-            // Detener los osciladores después del tiempo de meditación seleccionado
-            leftOscillator.stop(audioContext.currentTime + meditationDuration);
-            rightOscillator.stop(audioContext.currentTime + meditationDuration);
-
-            // Mostrar la pantalla de agradecimiento después de que la pantalla se haya desvanecido
-            setTimeout(function() {
-                paradiseImage.style.display = 'none';
-                paradiseImage.classList.remove('hypnotic'); // Remover la clase de animación
-                thankYouScreen.classList.add('show-thank-you');
-            }, meditationDuration * 1000); // Mostrar después de que termine el tiempo de meditación
-        }
-
-        // Función para desvanecer el volumen
-        function fadeOutSound(leftGain, rightGain, fadeOutDuration) {
-            const currentTime = audioContext.currentTime;
-            leftGain.gain.setValueAtTime(leftGain.gain.value, currentTime);
-            leftGain.gain.linearRampToValueAtTime(0, currentTime + fadeOutDuration);
-            rightGain.gain.setValueAtTime(rightGain.gain.value, currentTime);
-            rightGain.gain.linearRampToValueAtTime(0, currentTime + fadeOutDuration);
-        }
-
-        // Función para desvanecer la imagen
-        function fadeOutImage(fadeOutDuration) {
-            paradiseImage.style.transition = `opacity ${fadeOutDuration}s`;
-            paradiseImage.style.opacity = 0;
+        function onSpiralComplete() {
+            // Mostrar el video al completar la espiral
+            spiralVideo.style.display = 'block';
+            spiralVideo.play();
+            canvas.style.display = 'none';
+            indicator.style.display = 'none';
         }
 
         // Eventos para la interacción
-        canvas.addEventListener('mousemove', onMove);
-        canvas.addEventListener('touchmove', onMove, { passive: false });
-
-        canvas.addEventListener('touchstart', onMove, { passive: false });
-        canvas.addEventListener('mousedown', onMove);
-
-        canvas.addEventListener('mouseup', function() {
-            stopSound();
-        });
-
-        canvas.addEventListener('touchend', function() {
-            stopSound();
-        }, { passive: false });
-
-        canvas.addEventListener('touchcancel', function() {
-            stopSound();
-        }, { passive: false });
-
-        document.body.addEventListener('touchstart', function(e) {
-            if (e.target == canvas) {
-                e.preventDefault();
-            }
-        }, { passive: false });
-
-        document.body.addEventListener('touchend', function(e) {
-            if (e.target == canvas) {
-                e.preventDefault();
-            }
-        }, { passive: false });
-
-        // Agregar evento al botón de inicio
         startButton.addEventListener('click', startInteraction);
-
-        // Función para ajustar la imagen según la orientación
-        function adjustParadiseImage() {
-            if (window.innerWidth > window.innerHeight) {
-                // Modo horizontal o pantalla ancha (PC de escritorio)
-                paradiseImage.src = 'paradise2.jpg';
-            } else {
-                // Modo vertical o pantalla estrecha (dispositivo móvil)
-                paradiseImage.src = 'paradise.jpg';
-            }
-        }
-
-        // Llamar a la función al cargar la página y al redimensionar la ventana
-        window.addEventListener('load', adjustParadiseImage);
-        window.addEventListener('resize', adjustParadiseImage);
 
         // Evento para el botón "Volver" y el logo
         volverButton.addEventListener('click', function() {
