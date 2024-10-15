@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Espiral Interactiva con Progreso Continuo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* CSS */
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: rgb(255, 0, 0); /* Color inicial (rojo puro) */
+            font-family: Arial, sans-serif;
+            color: #ffffff;
+        }
+
+        #canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        /* Estilo para el indicador visual */
+        #indicator {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            margin: -20px 0 0 -20px; /* Centra el indicador en el cursor */
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 255, 0, 0.8) 0%, rgba(255, 255, 0, 0) 60%);
+            pointer-events: none; /* No interfiere con eventos del mouse */
+            display: none; /* Oculto por defecto */
+            animation: pulse 1s infinite;
+        }
+
+        /* Estilo para el contenedor del mensaje de bienvenida */
+        #welcomeMessage {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            max-width: 600px;
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        #welcomeMessage h1 {
+            margin-top: 0;
+            font-size: 32px;
+            color: #FFFF00;
+        }
+
+        #welcomeMessage p {
+            font-size: 18px;
+            line-height: 1.5;
+        }
+
+        /* Estilo para el botón de inicio */
+        #startButton {
+            margin-top: 20px;
+            padding: 15px 30px;
+            font-size: 20px;
+            background-color: #ffffff;
+            color: #000000;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        /* Estilo para el video final */
+        #spiralVideo {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Estilo para la pantalla de agradecimiento */
+        #thankYouScreen {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000000;
+            color: #ffffff;
+            text-align: center;
+            padding-top: 20%;
+            opacity: 0;
+            transition: opacity 2s;
+        }
+
+        #thankYouScreen h1 {
+            font-size: 32px;
+            margin-bottom: 20px;
+        }
+
+        #thankYouScreen img {
+            width: 200px;
+            height: auto;
+            cursor: pointer;
+        }
+
+        #thankYouScreen a {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 15px 30px;
+            font-size: 20px;
+            background-color: #ffffff;
+            color: #000000;
+            border: none;
+            border-radius: 10px;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* Animación de pulso */
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.5);
+                opacity: 0.5;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    <video id="spiralVideo" src="animespiralow.mp4" autoplay loop muted></video> <!-- Video en bucle -->
+    <div id="indicator"></div> <!-- Indicador visual -->
+
+    <!-- Contenedor del mensaje de bienvenida -->
+    <div id="welcomeMessage">
+        <h1>Bienvenidos al Estimulador Cerebral de Ondas Theta</h1>
+        <p>
+            Las ondas cerebrales theta están asociadas con estados de relajación profunda, meditación y creatividad.
+            Para experimentar esta aplicación, recorre la espiral con el cursor o con tu dedo si estás en un dispositivo móvil, desde el centro hacia el exterior.
+            Al llegar al exterior, se iniciará un espacio de meditación.
+            Para una experiencia más efectiva e inmersiva, se recomienda usar audífonos.
+        </p>
+        <p>Selecciona el tiempo de meditación:</p>
+        <label><input type="radio" name="meditationTime" value="1" checked> 1 minuto</label><br>
+        <label><input type="radio" name="meditationTime" value="3"> 3 minutos</label><br>
+        <label><input type="radio" name="meditationTime" value="5"> 5 minutos</label>
+        <br>
+        <button id="startButton">Iniciar</button>
+    </div>
+
+    <!-- Pantalla de agradecimiento -->
+    <div id="thankYouScreen">
+        <h1>Muchas gracias por participar de esta experiencia</h1>
+        <a href="https://dosisinsolitas.com" id="volverButton">Volver</a><br><br>
+        <a href="https://dosisinsolitas.com">
+            <img src="logo-dosisinsolitas.png" alt="Dosis Insolitas">
+        </a>
+    </div>
+
+    <script>
+        // JavaScript
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const indicator = document.getElementById('indicator');
+        const startButton = document.getElementById('startButton');
+        const spiralVideo = document.getElementById('spiralVideo');
+        const welcomeMessage = document.getElementById('welcomeMessage');
+        const thankYouScreen = document.getElementById('thankYouScreen');
+        const volverButton = document.getElementById('volverButton');
+
+        let width, height;
+        let spiralPoints = []; // Almacenar los puntos de la espiral
+        let meditationTime = 1; // Tiempo de meditación seleccionado (por defecto 1 minuto)
+
+        function resizeCanvas() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+            drawSpiral();
+            drawProgress(); // Redibujar el progreso al redimensionar
+        }
+
+        function drawSpiral() {
+            ctx.clearRect(0, 0, width, height);
+            ctx.strokeStyle = '#FFFFFF';
+            ctx.lineWidth = 5;
+
+            spiralPoints = []; // Reiniciar los puntos de la espiral
+
+            const centerX = width / 2;
+            const centerY = height / 2;
+            const maxRadius = Math.min(width, height) / 2 - 20; // Radio máximo ajustado al tamaño de la pantalla
+            const numberOfTurns = 6; // Número de vueltas de la espiral
+            const totalSteps = 2000;
+            const angleOffset = 0; // Para ajustar la rotación inicial de la espiral
+
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY);
+
+            for (let i = 0; i <= totalSteps; i++) {
+                let t = i / totalSteps; // t va de 0 a 1
+                let angle = t * numberOfTurns * 2 * Math.PI + angleOffset; // Ángulo total basado en el número de vueltas
+                let radius = t * maxRadius;
+
+                let x = centerX + radius * Math.cos(angle);
+                let y = centerY + radius * Math.sin(angle);
+
+                spiralPoints.push({ x: x, y: y, progress: t }); // Almacenar el punto y su progreso
+
+                ctx.lineTo(x, y);
+            }
+
+            ctx.stroke();
+        }
+
+        function startInteraction() {
+            // Leer el tiempo de meditación seleccionado
+            const selectedTime = document.querySelector('input[name="meditationTime"]:checked').value;
+            meditationTime = parseInt(selectedTime);
+
+            // Ocultar el mensaje de bienvenida y mostrar el canvas
+            welcomeMessage.style.display = 'none';
+            canvas.style.display = 'block';
+
+            // Ajustar el tamaño del canvas y dibujar la espiral
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+        }
+
+        function onSpiralComplete() {
+            // Mostrar el video al completar la espiral
+            spiralVideo.style.display = 'block';
+            spiralVideo.play();
+            canvas.style.display = 'none';
+            indicator.style.display = 'none';
+        }
+
+        // Eventos para la interacción
+        startButton.addEventListener('click', startInteraction);
+
+        // Evento para el botón "Volver" y el logo
+        volverButton.addEventListener('click', function() {
+            window.location.href = 'https://dosisinsolitas.com';
+        });
+    </script>
+</body>
+</html>
