@@ -140,7 +140,7 @@
 </head>
 <body>
     <canvas id="canvas"></canvas>
-    <video id="spiralVideo" src="animespiralow.mp4" autoplay loop muted></video> <!-- Video en bucle -->
+    <video id="spiralVideo" src="animespirallow.mp4" autoplay loop muted></video> <!-- Video en bucle -->
     <div id="indicator"></div> <!-- Indicador visual -->
 
     <!-- Contenedor del mensaje de bienvenida -->
@@ -242,6 +242,8 @@
             // Mostrar el video al completar la espiral
             spiralVideo.style.display = 'block';
             spiralVideo.play();
+            spiralVideo.loop = true; // Reproducir en bucle
+            spiralVideo.style.animationDuration = `${meditationTime}m`; // Ajustar la duración del video según el tiempo de meditación seleccionado
             canvas.style.display = 'none';
             indicator.style.display = 'none';
         }
