@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Horóscopo Semanal - Dosis Insólitas</title>
+    
+    <style>
+    @import url('styles.css');
+        body {
+            background-image: url('https://example.com/imagenes/nebulosa.jpg');
+            background-size: cover;
+            background-attachment: fixed;
+            color: #ffd700;
+            text-shadow: 3px 3px 6px #000000;
+            font-size: 1.3em;
+            font-family: 'Arial Black', Gadget, sans-serif;
+        }
+        header {
+            text-align: center;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            border-bottom: 1px solid #ff8906;
+            box-shadow: 0 0 20px rgba(255, 137, 6, 0.5);
+        }
+        h1 {
+            font-size: 3em;
+            color: #ff8906;
+            font-family: 'Cinzel', serif;
+            text-shadow: 0 0 10px #ff8906, 0 0 20px #ff5e00;
+        }
+        .circular-menu {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            width: 400px;
+            height: 400px;
+            margin: 50px auto;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.5);
+            box-shadow: 0 0 15px #000000;
+        }
+        .signo-link {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            text-align: center;
+            color: #ff8906;
+            font-weight: bold;
+            text-decoration: none;
+        }
+        .signo-link img {
+            width: 100%;
+            height: auto;
+        }
+        /* Posiciones de los signos en el círculo */
+        .aries { top: 13%; left: 50%; transform: translate(-50%, -50%); }
+        .tauro { top: 17%; left: 70%; transform: translate(-50%, -50%); }
+        .geminis { top: 30%; left: 83%; transform: translate(-50%, -50%); }
+        .cancer { top: 50%; left: 89%; transform: translate(-50%, -50%); }
+        .leo { top: 55%; left: 85%; transform: translate(-50%, 50%); }
+        .virgo { bottom: 18%; left: 70%; transform: translate(-50%, 50%); }
+        .libra { bottom: 12%; left: 50%; transform: translate(-50%, 50%); }
+        .escorpio { bottom: 18%; left: 29%; transform: translate(-50%, 50%); }
+        .sagitario { bottom: 18%; left: 16%; transform: translate(-50%, -50%); }
+        .capricornio { top: 50%; left: 11%; transform: translate(-50%, -50%); }
+        .acuario { top: 31%; left: 16%; transform: translate(-50%, -50%); }
+        .piscis { top: 17%; left: 30%; transform: translate(-50%, -50%); }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel&family=Cormorant+Garamond&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <h1>Horóscopo Semanal</h1>
+        <p style="color: #ffd700; font-weight: bold;">Semana del 14 de octubre al 20 de octubre de 2024</p>
+        <p>Bienvenidos a la sección del Horóscopo Semanal de Dosis Insólitas. Consulta las recomendaciones astrológicas para tu signo y descubre qué energías te influirán esta semana.</p>
+    </header>
+
+    <main>
+        <div class="circular-menu">
+            <a href="ariessemanal.html" class="signo-link aries"><img src="ariesicon.png" alt="Aries"></a>
+            <a href="taurosemanal.html" class="signo-link tauro"><img src="tauroicon.png" alt="Tauro"></a>
+            <a href="geminisemanal.html" class="signo-link geminis"><img src="geminisicon.png" alt="Géminis"></a>
+            <a href="cancersemanal.html" class="signo-link cancer"><img src="cancericon.png" alt="Cáncer"></a>
+            <a href="leosemanal.html" class="signo-link leo"><img src="leoicon.png" alt="Leo"></a>
+            <a href="virgosemanal.html" class="signo-link virgo"><img src="virgoicon.png" alt="Virgo"></a>
+            <a href="librasemanal.html" class="signo-link libra"><img src="libraicon.png" alt="Libra"></a>
+            <a href="escorpiosemanal.html" class="signo-link escorpio"><img src="escorpioicon.png" alt="Escorpio"></a>
+            <a href="sagitarios.html" class="signo-link sagitario"><img src="sagitarioicon.png" alt="Sagitario"></a>
+            <a href="capricornio.html" class="signo-link capricornio"><img src="capricornioicon.png" alt="Capricornio"></a>
+            <a href="acuario.html" class="signo-link acuario"><img src="acuarioicon.png" alt="Acuario"></a>
+            <a href="piscissemanal.html" class="signo-link piscis"><img src="piscisicon.png" alt="Piscis"></a>
+            <img src="circulozodiacal.png" alt="Círculo Zodiacal" style="width: 100%; max-width: 1000px; display: block; margin: 20px auto;">
+    </div>
+</main>
+
+    <footer>
+        <p>&copy; 2024 Dosis Insólitas. Todos los derechos reservados.</p>
+    </footer>
+</body>
+</html>
