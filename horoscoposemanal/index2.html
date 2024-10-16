@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Horóscopo Semanal - Dosis Insólitas</title>
+    <!-- Metaetiqueta para dispositivos móviles -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Enlace a las fuentes de Google -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel&family=Cormorant+Garamond&display=swap" rel="stylesheet">
+    <!-- Tus estilos CSS -->
+    <style>
+        body {
+            background-image: url('portalbackground.jpg');
+            background-size: cover;
+            background-attachment: fixed;
+            color: #ffd700;
+            text-shadow: 3px 3px 6px #000000;
+            font-size: 1.3em;
+            font-family: 'Arial Black', Gadget, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            text-align: center;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            border-bottom: 1px solid #ff8906;
+            box-shadow: 0 0 20px rgba(255, 137, 6, 0.5);
+        }
+        h1 {
+            font-size: 3em;
+            color: #ff8906;
+            font-family: 'Cinzel', serif;
+            text-shadow: 0 0 10px #ff8906, 0 0 20px #ff5e00;
+            margin: 0;
+        }
+        header p {
+            margin: 10px 0;
+        }
+        main {
+            position: relative;
+            overflow: hidden;
+            padding: 20px 0;
+        }
+        .circular-menu {
+            position: relative;
+            width: 80vw;
+            height: 80vw;
+            max-width: 500px;
+            max-height: 500px;
+            margin: 0 auto;
+            border-radius: 50%;
+            box-shadow: 0 0 15px #000000;
+        }
+        .circular-menu img.circulo-zodiacal {
+            width: 100%;
+            height: auto;
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            border-radius: 50%;
+        }
+        .signo-link {
+            position: absolute;
+            width: 12%;
+            height: 12%;
+            text-align: center;
+            color: #ff8906;
+            font-weight: bold;
+            text-decoration: none;
+            transform: translate(-50%, -50%);
+        }
+        .signo-link img {
+            width: 100%;
+            height: auto;
+            transition: transform 0.3s ease, filter 0.3s ease;
+        }
+        .signo-link:hover img {
+            transform: scale(1.2);
+            filter: brightness(1.5);
+        }
+        /* Posiciones de los signos */
+        .aries {
+            top: 10%;
+            left: 50%;
+        }
+        .tauro {
+            top: 19%;
+            left: 69%;
+        }
+        .geminis {
+            top: 35%;
+            left: 82%;
+        }
+        .cancer {
+            top: 55%;
+            left: 88%;
+        }
+        .leo {
+            top: 70%;
+            left: 82%;
+        }
+        .virgo {
+            top: 81%;
+            left: 69%;
+        }
+        .libra {
+            top: 90%;
+            left: 50%;
+        }
+        .escorpio {
+            top: 81%;
+            left: 31%;
+        }
+        .sagitario {
+            top: 70%;
+            left: 18%;
+        }
+        .capricornio {
+            top: 55%;
+            left: 12%;
+        }
+        .acuario {
+            top: 35%;
+            left: 18%;
+        }
+        .piscis {
+            top: 19%;
+            left: 31%;
+        }
+        /* Estilos del tooltip */
+        .tooltip {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.7);
+            color: #ffd700;
+            padding: 5px 10px;
+            border-radius: 5px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            font-size: 1em;
+            z-index: 10;
+            transform: translate(-50%, -120%);
+        }
+        footer {
+            text-align: center;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            color: #ffd700;
+            font-size: 0.9em;
+            border-top: 1px solid #ff8906;
+            box-shadow: 0 0 20px rgba(255, 137, 6, 0.5);
+        }
+        /* Media Query para pantallas pequeñas */
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2em;
+            }
+            body {
+                font-size: 1em;
+            }
+            .signo-link {
+                width: 15%;
+                height: 15%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Horóscopo Semanal</h1>
+        <p style="color: #ffd700; font-weight: bold;">Semana del 14 de octubre al 20 de octubre de 2024</p>
+        <p>Bienvenidos a la sección del Horóscopo Semanal de Dosis Insólitas. Consulta las recomendaciones astrológicas para tu signo y descubre qué energías te influirán esta semana.</p>
+    </header>
+
+    <main>
+        <div class="circular-menu">
+            <!-- Imagen del círculo zodiacal -->
+            <img src="circulozodiacal.png" alt="Círculo Zodiacal" class="circulo-zodiacal">
+            <!-- Enlaces a los signos -->
+            <a href="ariessemanal.html" class="signo-link aries" data-signo="Aries">
+                <img src="ariesicon.png" alt="Aries">
+            </a>
+            <a href="taurosemanal.html" class="signo-link tauro" data-signo="Tauro">
+                <img src="tauroicon.png" alt="Tauro">
+            </a>
+            <a href="geminisemanal.html" class="signo-link geminis" data-signo="Géminis">
+                <img src="geminisicon.png" alt="Géminis">
+            </a>
+            <a href="cancersemanal.html" class="signo-link cancer" data-signo="Cáncer">
+                <img src="cancericon.png" alt="Cáncer">
+            </a>
+            <a href="leosemanal.html" class="signo-link leo" data-signo="Leo">
+                <img src="leoicon.png" alt="Leo">
+            </a>
+            <a href="virgosemanal.html" class="signo-link virgo" data-signo="Virgo">
+                <img src="virgoicon.png" alt="Virgo">
+            </a>
+            <a href="librasemanal.html" class="signo-link libra" data-signo="Libra">
+                <img src="libraicon.png" alt="Libra">
+            </a>
+            <a href="escorpiosemanal.html" class="signo-link escorpio" data-signo="Escorpio">
+                <img src="escorpioicon.png" alt="Escorpio">
+            </a>
+            <a href="sagitariosemanal.html" class="signo-link sagitario" data-signo="Sagitario">
+                <img src="sagitarioicon.png" alt="Sagitario">
+            </a>
+            <a href="capricorniosemanal.html" class="signo-link capricornio" data-signo="Capricornio">
+                <img src="capricornioicon.png" alt="Capricornio">
+            </a>
+            <a href="acuariosemanal.html" class="signo-link acuario" data-signo="Acuario">
+                <img src="acuarioicon.png" alt="Acuario">
+            </a>
+            <a href="piscissemanal.html" class="signo-link piscis" data-signo="Piscis">
+                <img src="piscisicon.png" alt="Piscis">
+            </a>
+            <!-- Tooltip -->
+            <div id="tooltip" class="tooltip"></div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Dosis Insólitas. Todos los derechos reservados.</p>
+    </footer>
+
+    <!-- Script para el tooltip -->
+    <script>
+        const signos = document.querySelectorAll('.signo-link');
+        const tooltip = document.getElementById('tooltip');
+
+        signos.forEach(signo => {
+            signo.addEventListener('mouseenter', () => {
+                const signoNombre = signo.getAttribute('data-signo');
+                tooltip.textContent = signoNombre;
+                const signoRect = signo.getBoundingClientRect();
+                tooltip.style.top = `${signoRect.top + window.scrollY - 10}px`;
+                tooltip.style.left = `${signoRect.left + window.scrollX + signoRect.width / 2}px`;
+                tooltip.style.opacity = 1;
+            });
+
+            signo.addEventListener('mouseleave', () => {
+                tooltip.style.opacity = 0;
+            });
+        });
+    </script>
+</body>
+</html>
