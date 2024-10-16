@@ -235,7 +235,7 @@
                 tooltip.textContent = signoNombre;
                 const signoRect = signo.getBoundingClientRect();
                 tooltip.style.top = `${signoRect.top + window.scrollY - 10}px`;
-                tooltip.style.left = `${signoRect.left + window.scrollX + signoRect.width / 2}px`;
+                tooltip.style.left = `${signoRect.left + window.scrollX + signoRect.width / 2 - 500}px`;
                 tooltip.style.opacity = 1;
             });
 
