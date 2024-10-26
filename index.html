@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dosis Insólitas - Explora lo Curioso y Espiritual</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon.png">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: #000 url('images/fondo-mistico.jpg') no-repeat center center;
+            background-size: cover;
+            background-attachment: scroll;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Para pantallas grandes, mantiene el fondo fijo */
+        @media (min-width: 1024px) {
+            body {
+                background-attachment: fixed;
+            }
+        }
+
+        /* Ajustes para pantallas pequeñas */
+        @media (max-width: 768px) {
+            body {
+                background-position: center top;
+                background-size: auto 100%;
+            }
+        }
+
+        .container {
+            text-align: center;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            max-width: 1000px;
+            width: 90%;
+            margin: 20px;
+        }
+        h1 {
+            font-size: 3em;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+        p {
+            font-size: 1.2em;
+            margin-bottom: 30px;
+        }
+        .link-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        .link {
+            text-decoration: none;
+            color: #ffd700;
+            font-weight: bold;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px 25px;
+            border-radius: 10px;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            font-size: 1.5em;
+        }
+        .link:hover {
+            background-color: #ffd700;
+            color: #3a1c71;
+            transform: scale(1.05);
+        }
+        .article-gallery {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            text-align: left;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            margin-bottom: 40px;
+        }
+        .article-card {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        .article-card h3 {
+            color: #ffd700;
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+        .article-card p {
+            font-size: 1em;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        .article-card a {
+            color: #ffd700;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .article-card a:hover {
+            text-decoration: underline;
+        }
+        footer {
+            margin-top: 40px;
+            font-size: 0.9em;
+        }
+        .footer-link {
+            color: #ffd700;
+            text-decoration: none;
+        }
+        .footer-link:hover {
+            text-decoration: underline;
+        }
+        .logo {
+            margin-bottom: 30px;
+        }
+        .logo img {
+            width: 150px;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <img src="images/logo-dosisinsolitas.png" alt="Dosis Insólitas">
+        </div>
+        <header>
+            <h1>Dosis Insólitas</h1>
+            <p>Explora lo curioso, lo espiritual y lo mágico del universo con nuestras herramientas únicas, artículos especializados y contenido espiritual.</p>
+        </header>
+        <div class="link-container">
+            <a href="https://dosisinsolitas.com/horoscoposemanal/" class="link"><i class="fas fa-star"></i> Horóscopo Semanal</a>
+            <a href="https://dosisinsolitas.com/espiralmeditativo" class="link"><i class="fas fa-brain"></i> Estimulador Cerebral de Ondas Theta</a>
+            <a href="https://dosisinsolitas.com/calendario2/" class="link"><i class="fas fa-calendar-alt"></i> Calendario Lunar Climático</a>
+            <a href="https://dosisinsolitas.com/ritmoscircadianos/" class="link"><i class="fas fa-clock"></i> Calculadora de Ritmos Circadianos</a>
+            <a href="https://dosisinsolitas.com/calculadoraenergia/" class="link"><i class="fas fa-battery-full"></i> Calculadora de Energía Personal</a>
+            <a href="https://www.tiktok.com/@dosisinsolitas" target="_blank" class="link"><i class="fab fa-tiktok"></i> Síguenos en TikTok</a>
+            <a href="https://www.redbubble.com/es/people/dosisinsolitas/shop?asc=u" target="_blank" class="link"><i class="fas fa-store"></i> Visita Nuestra Tienda</a>
+        </div>
+        <section class="article-gallery">
+            <div class="article-card">
+                <h3>La Influencia de la Luna Llena en Nuestras Emociones</h3>
+                <p>La Luna Llena ha sido asociada durante siglos con el comportamiento humano y las emociones. Se cree que su energía puede amplificar nuestras emociones, tanto positivas como negativas...</p>
+                <a href="https://dosisinsolitas.com/articulos/lunallenaemociones.html">Leer más</a>
+            </div>
+            <div class="article-card">
+                <h3>Cómo Mejorar el Descanso Respetando los Ciclos Circadianos</h3>
+                <p>Los ciclos circadianos son fundamentales para nuestro bienestar general. Dormir alineado con estos ciclos te permite sentirte más descansado y energético...</p>
+                <a href="https://dosisinsolitas.com/articulos/cicloscircadianos">Leer más</a>
+            </div>
+            <div class="article-card">
+                <h3>El Poder de la Meditación Durante la Luna Nueva</h3>
+                <p>La Luna Nueva es el momento perfecto para establecer nuevas intenciones y practicar la meditación. En este artículo, te mostramos cómo la meditación durante esta fase lunar puede ayudarte...</p>
+                <a href="https://dosisinsolitas.com/articulos/meditacionlunanueva">Leer más</a>
+            </div>
+            <div class="article-card">
+                <h3>Rituales Espirituales para Conectar con la Naturaleza</h3>
+                <p>Aprender a conectar con la naturaleza a través de rituales espirituales puede ser una herramienta poderosa para mejorar el bienestar personal...</p>
+                <a href="https://dosisinsolitas.com/articulos/ritualesnaturaleza">Leer más</a>
+            </div>
+        </section>
+        <footer>
+            <p>&copy; 2024 Dosis Insólitas. Todos los derechos reservados.</p>
+            <p><a href="https://dosisinsolitas.com/politica-de-privacidad/" class="footer-link">Política de Privacidad</a></p>
+        </footer>
+    </div>
+</body>
+</html>
