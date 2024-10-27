@@ -184,7 +184,7 @@
         <label><input type="radio" name="meditationTime" value="3"> 3 minutos</label><br>
         <label><input type="radio" name="meditationTime" value="5"> 5 minutos</label>
         <br>
-        <button id="startButton">Iniciar</button>
+        <button id="startButton" onclick="startInteraction()">Iniciar</button>
     </div>
     <!-- Pantalla de agradecimiento -->
     <div id="thankYouScreen">
@@ -359,35 +359,4 @@
                 document.body.style.backgroundColor = `rgb(0, 0, ${colorValue})`;
                 
                 if (currentIndex >= wavePoints.length) {
-                    canvas.style.display = 'none';
-                    indicator.style.display = 'none';
-                    stopSound();
-                    document.body.style.backgroundColor = 'rgb(0, 0, 0)';
-                    playFourthInterval(lastBaseFrequency);
-                }
-            } else {
-                indicator.style.display = 'none';
-                stopSound();
-            }
-        }
-
-        // Función para reproducir el intervalo de cuarta, manteniendo la diferencia delta
-        function playFourthInterval(baseFrequency) {
-            if (!audioContext) return;
-            let fourthFrequency = baseFrequency * (4 / 3); // Calcular la cuarta justa
-            const leftOscillator = audioContext.createOscillator();
-            const rightOscillator = audioContext.createOscillator();
-            leftOscillator.type = 'sine';
-            rightOscillator.type = 'sine';
-            const leftGain = audioContext.createGain();
-            const rightGain = audioContext.createGain();
-            leftGain.gain.value = 0.1;
-            rightGain.gain.value = 0.1;
-            const leftPanner = audioContext.createStereoPanner();
-            leftPanner.pan.setValueAtTime(-1, audioContext.currentTime);
-            const rightPanner = audioContext.createStereoPanner();
-            rightPanner.pan.setValueAtTime(1, audioContext.currentTime);
-            leftOscillator.connect(leftGain).connect(leftPanner).connect(audioContext.destination);
-            rightOscillator.connect(rightGain).connect(rightPanner).connect(audioContext.destination);
-            leftOscillator.frequency.setValueAtTime(fourthFrequency / 4, audioContext.currentTime); // Dos octavas más bajas
-            rightOscillator.frequency.setValueAtTime((fourthFrequency /
+                    canvas.style.display
