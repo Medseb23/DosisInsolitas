@@ -327,8 +327,6 @@
                     pathCompleted = true;
                     // Detener el sonido actual
                     stopSound();
-                    // Reproducir el sonido final
-                    playFinalSound(lastBaseFrequency);
                     // Transición de la pantalla a negro
                     document.body.style.backgroundColor = '#000000';
                     // Mostrar la imagen desplazable
@@ -336,6 +334,10 @@
                     // Ocultar elementos
                     canvas.style.display = 'none';
                     indicator.style.display = 'none';
+                    // Iniciar el sonido después de mostrar la imagen
+                    setTimeout(() => {
+                        playFinalSound(lastBaseFrequency);
+                    }, 100); // Esperamos un pequeño tiempo para asegurar que la imagen se muestra primero
                     // Programar el fin de la meditación
                     let meditationDuration = meditationTime * 60 * 1000;
                     setTimeout(endMeditation, meditationDuration);
@@ -361,8 +363,12 @@
             // Crear nodos de ganancia y paneo
             const leftGain = audioContext.createGain();
             const rightGain = audioContext.createGain();
-            leftGain.gain.value = 0.1;
-            rightGain.gain.value = 0.1;
+            // Iniciar con ganancia 0 para el fade-in
+            leftGain.gain.setValueAtTime(0, audioContext.currentTime);
+            rightGain.gain.setValueAtTime(0, audioContext.currentTime);
+            // Realizar fade-in en 1 segundo
+            leftGain.gain.linearRampToValueAtTime(0.1, audioContext.currentTime + 1);
+            rightGain.gain.linearRampToValueAtTime(0.1, audioContext.currentTime + 1);
             const leftPanner = audioContext.createStereoPanner();
             leftPanner.pan.setValueAtTime(-1, audioContext.currentTime);
             const rightPanner = audioContext.createStereoPanner();
@@ -384,8 +390,14 @@
         function endMeditation() {
             // Gradualmente reducir el volumen en 5 segundos
             if (oscillatorNodes) {
-                oscillatorNodes.leftGain.gain.linearRampToValueAtTime(0, audioContext.currentTime + 5);
-                oscillatorNodes.rightGain.gain.linearRampToValueAtTime(0, audioContext.currentTime + 5);
+                const endTime = audioContext.currentTime + 5;
+                oscillatorNodes.leftGain.gain.setValueAtTime(oscillatorNodes.leftGain.gain.value, audioContext.currentTime);
+                oscillatorNodes.leftGain.gain.linearRampToValueAtTime(0, endTime);
+                oscillatorNodes.rightGain.gain.setValueAtTime(oscillatorNodes.rightGain.gain.value, audioContext.currentTime);
+                oscillatorNodes.rightGain.gain.linearRampToValueAtTime(0, endTime);
+                // Detener los osciladores después del fade out
+                oscillatorNodes.leftOscillator.stop(endTime);
+                oscillatorNodes.rightOscillator.stop(endTime);
             }
             // Desvanecer la imagen en 5 segundos
             scrollingImage.style.transition = 'opacity 5s';
