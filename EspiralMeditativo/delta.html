@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Ondas Delta para Sueño Profundo y Relajación</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* CSS */
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: rgb(0, 0, 50); /* Color inicial (azul oscuro para inducir calma) */
+            font-family: Arial, sans-serif;
+            color: #ffffff;
+        }
+        #canvas {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        /* Estilo para el indicador visual */
+        #indicator {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            margin: -20px 0 0 -20px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(0, 0, 255, 0.8) 0%, rgba(0, 0, 255, 0) 60%);
+            pointer-events: none;
+            display: none;
+            animation: pulse 2s infinite;
+        }
+        /* Estilo para el contenedor del mensaje de bienvenida */
+        #welcomeMessage {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            max-width: 600px;
+            background-color: rgba(0, 0, 50, 0.8);
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        #welcomeMessage h1 {
+            margin-top: 0;
+            font-size: 32px;
+            color: #00FFFF;
+        }
+        #welcomeMessage p {
+            font-size: 18px;
+            line-height: 1.5;
+        }
+        /* Estilo para el botón de inicio */
+        #startButton {
+            margin-top: 20px;
+            padding: 15px 30px;
+            font-size: 20px;
+            background-color: #ffffff;
+            color: #000000;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        /* Estilo para la imagen final */
+        #paradiseImage {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: opacity 5s;
+        }
+        /* Clase para la animación de ondas */
+        .wave-movement {
+            animation: waveEffect 40s infinite;
+            animation-timing-function: ease-in-out;
+        }
+        /* Estilo para la pantalla de agradecimiento */
+        #thankYouScreen {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000000;
+            color: #ffffff;
+            text-align: center;
+            padding-top: 20%;
+            opacity: 0;
+            transition: opacity 2s;
+        }
+        #thankYouScreen h1 {
+            font-size: 32px;
+            margin-bottom: 20px;
+        }
+        #thankYouScreen img {
+            width: 200px;
+            height: auto;
+            cursor: pointer;
+        }
+        #thankYouScreen a {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 15px 30px;
+            font-size: 20px;
+            background-color: #ffffff;
+            color: #000000;
+            border: none;
+            border-radius: 10px;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        /* Animación de pulso para el indicador visual */
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.5);
+                opacity: 0.5;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        /* Animación de efecto de ondas */
+        @keyframes waveEffect {
+            0% {
+                transform: translateX(0) scaleY(1);
+            }
+            50% {
+                transform: translateX(20px) scaleY(1.05);
+            }
+            100% {
+                transform: translateX(0) scaleY(1);
+            }
+        }
+        /* Clase para mostrar la pantalla de agradecimiento */
+        .show-thank-you {
+            opacity: 1;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    <img id="paradiseImage" src="delta_waves.jpg" alt="Ondas Delta"> <!-- Imagen de ondas delta -->
+    <div id="indicator"></div> <!-- Indicador visual -->
+    <!-- Contenedor del mensaje de bienvenida -->
+    <div id="welcomeMessage">
+        <h1>Bienvenidos a la Experiencia de Ondas Delta</h1>
+        <p>
+            Las ondas cerebrales delta están asociadas con el descanso profundo, la somnolencia y la meditación profunda.
+            Para experimentar esta aplicación, recorre las ondas con el cursor o con tu dedo si estás en un dispositivo móvil, moviéndote lentamente para disfrutar de cada fase.
+            Para una experiencia más efectiva e inmersiva, se recomienda usar audífonos.
+        </p>
+        <p>Selecciona el tiempo de meditación:</p>
+        <label><input type="radio" name="meditationTime" value="1" checked> 1 minuto</label><br>
+        <label><input type="radio" name="meditationTime" value="3"> 3 minutos</label><br>
+        <label><input type="radio" name="meditationTime" value="5"> 5 minutos</label>
+        <br>
+        <button id="startButton">Iniciar</button>
+    </div>
+    <!-- Pantalla de agradecimiento -->
+    <div id="thankYouScreen">
+        <h1>Muchas gracias por participar de esta experiencia</h1>
+        <a href="https://dosisinsolitas.com" id="volverButton">Volver</a><br><br>
+        <a href="https://dosisinsolitas.com">
+            <img src="logo-dosisinsolitas.png" alt="Dosis Insolitas">
+        </a>
+    </div>
+    <script>
+        // JavaScript
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const indicator = document.getElementById('indicator');
+        const startButton = document.getElementById('startButton');
+        const paradiseImage = document.getElementById('paradiseImage');
+        const welcomeMessage = document.getElementById('welcomeMessage');
+        const thankYouScreen = document.getElementById('thankYouScreen');
+        const volverButton = document.getElementById('volverButton');
+        let width, height;
+        let wavePoints = []; // Almacenar los puntos de las ondas
+        let meditationTime = 1; // Tiempo de meditación seleccionado (por defecto 1 minuto)
+
+        function resizeCanvas() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+            drawWaves();
+            drawProgress();
+        }
+
+        // Función para dibujar las ondas adaptativas y almacenar sus puntos
+        function drawWaves() {
+            ctx.clearRect(0, 0, width, height);
+            ctx.strokeStyle = '#FFFFFF';
+            ctx.lineWidth = 5;
+            wavePoints = [];
+            const centerX = width / 2;
+            const totalSteps = 2000;
+            const waveAmplitude = 100; // Amplitud de las ondas
+            const waveLength = 50; // Longitud de cada ciclo de onda
+            ctx.beginPath();
+            for (let i = 0; i <= totalSteps; i++) {
+                let t = i / totalSteps;
+                let x = centerX + (i - totalSteps / 2) * (width / totalSteps);
+                let y = height / 2 + waveAmplitude * Math.sin((i / waveLength) * 2 * Math.PI);
+                wavePoints.push({ x: x, y: y, progress: t });
+                ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+        }
+
+        // Variables para el seguimiento del progreso
+        let currentIndex = 0;
+        let progressPoints = [];
+        let audioContext = null;
+
+        function initAudio() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                if (audioContext.state === 'suspended') {
+                    audioContext.resume();
+                }
+            }
+        }
+
+        function startBinauralOscillators() {
+            const leftOscillator = audioContext.createOscillator();
+            const rightOscillator = audioContext.createOscillator();
+            leftOscillator.type = 'sine';
+            rightOscillator.type = 'sine';
+            const leftGain = audioContext.createGain();
+            const rightGain = audioContext.createGain();
+            leftGain.gain.value = 0.1;
+            rightGain.gain.value = 0.1;
+            const leftPanner = audioContext.createStereoPanner();
+            leftPanner.pan.setValueAtTime(-1, audioContext.currentTime);
+            const rightPanner = audioContext.createStereoPanner();
+            rightPanner.pan.setValueAtTime(1, audioContext.currentTime);
+            leftOscillator.connect(leftGain).connect(leftPanner).connect(audioContext.destination);
+            rightOscillator.connect(rightGain).connect(rightPanner).connect(audioContext.destination);
+            leftOscillator.start();
+            rightOscillator.start();
+            return {
+                leftOscillator: leftOscillator,
+                rightOscillator: rightOscillator,
+                leftGain: leftGain,
+                rightGain: rightGain
+            };
+        }
+
+        let oscillatorNodes = null;
+        function startInteraction() {
+            const selectedTime = document.querySelector('input[name="meditationTime"]:checked').value;
+            meditationTime = parseInt(selectedTime);
+            welcomeMessage.style.display = 'none';
+            canvas.style.display = 'block';
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+            initAudio();
+        }
+
+        function stopSound() {
+            if (oscillatorNodes) {
+                oscillatorNodes.leftOscillator.stop();
+                oscillatorNodes.rightOscillator.stop();
+                oscillatorNodes.leftOscillator.disconnect();
+                oscillatorNodes.rightOscillator.disconnect();
+                oscillatorNodes = null;
+            }
+        }
+
+        function isCursorNearCurrentPoint(x, y) {
+            if (currentIndex >= wavePoints.length) return false;
+            let point = wavePoints[currentIndex];
+            let dx = x - point.x;
+            let dy = y - point.y;
+            let distance = Math.sqrt(dx * dx + dy * dy);
+            if (distance <= 60) {
+                currentIndex++;
+                return true;
+            }
+            return false;
+        }
+
+        function drawProgress() {
+            if (progressPoints.length > 1) {
+                ctx.strokeStyle = '#00FFFF';
+                ctx.lineWidth = 5;
+                ctx.beginPath();
+                ctx.moveTo(progressPoints[0].x, progressPoints[0].y);
+                for (let i = 1; i < progressPoints.length; i++) {
+                    ctx.lineTo(progressPoints[i].x, progressPoints[i].y);
+                }
+                ctx.stroke();
+            }
+        }
+
+        function onMove(event) {
+            let x, y;
+            if (event.touches && event.touches.length > 0) {
+                x = event.touches[0].clientX;
+                y = event.touches[0].clientY;
+            } else if (event.clientX !== undefined && event.clientY !== undefined) {
+                x = event.clientX;
+                y = event.clientY;
+            } else {
+                return;
+            }
+            if (isCursorNearCurrentPoint(x, y)) {
+                progressPoints.push(wavePoints[currentIndex]);
+                drawProgress();
+                indicator.style.left = x + 'px';
+                indicator.style.top = y + 'px';
+                indicator.style.display = 'block';
+                if (!oscillatorNodes) {
+                    oscillatorNodes = startBinauralOscillators();
+                }
+                if (oscillatorNodes) {
+                    let minFreq = 0.5;
+                    let maxFreq = 4;
+                    let baseFrequency = minFreq + (maxFreq - minFreq) * (currentIndex / wavePoints.length);
+                    oscillatorNodes.leftOscillator.frequency.setValueAtTime(baseFrequency, audioContext.currentTime);
+                    oscillatorNodes.rightOscillator.frequency.setValueAtTime(baseFrequency + 0.25, audioContext.currentTime);
+                }
+                if (currentIndex >= wavePoints.length) {
+                    paradiseImage.style.display = 'block';
+                    paradiseImage.classList.add('wave-movement');
+                    paradiseImage.style.opacity = 1;
+                    canvas.style.display = 'none';
+                    indicator.style.display = 'none';
+                    stopSound();
+                }
+            } else {
+                indicator.style.display = 'none';
+                stopSound();
+            }
+        }
+
+        canvas.addEventListener('mousemove', onMove);
+        canvas.addEventListener('touchmove', onMove, { passive: false });
+        startButton.addEventListener('click', startInteraction);
+    </script>
+</body>
+</html>
