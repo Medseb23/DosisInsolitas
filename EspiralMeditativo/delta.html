@@ -9,10 +9,9 @@
         body {
             margin: 0;
             overflow: hidden;
-            background-color: rgb(0, 191, 255); /* Color inicial (azul claro) */
+            background-color: rgb(0, 0, 50); /* Color inicial (azul oscuro para inducir calma) */
             font-family: Arial, sans-serif;
             color: #ffffff;
-            transition: background-color 5s linear; /* Transición suave del color de fondo */
         }
         #canvas {
             display: none;
@@ -276,10 +275,97 @@
         }
 
         let oscillatorNodes = null;
-        let lastBaseFrequency = 0; // Para almacenar la última frecuencia base alcanzada
-
         function startInteraction() {
-            const selectedTimeElement = document.querySelector('input[name="meditationTime"]:checked');
-            if (selectedTimeElement) {
-                meditationTime = parseInt(selectedTimeElement.value);
-                welcomeMessage.style
+            const selectedTime = document.querySelector('input[name="meditationTime"]:checked').value;
+            meditationTime = parseInt(selectedTime);
+            welcomeMessage.style.display = 'none';
+            canvas.style.display = 'block';
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+            initAudio();
+        }
+
+        function stopSound() {
+            if (oscillatorNodes) {
+                oscillatorNodes.leftOscillator.stop();
+                oscillatorNodes.rightOscillator.stop();
+                oscillatorNodes.leftOscillator.disconnect();
+                oscillatorNodes.rightOscillator.disconnect();
+                oscillatorNodes = null;
+            }
+        }
+
+        function isCursorNearCurrentPoint(x, y) {
+            if (currentIndex >= wavePoints.length) return false;
+            let point = wavePoints[currentIndex];
+            let dx = x - point.x;
+            let dy = y - point.y;
+            let distance = Math.sqrt(dx * dx + dy * dy);
+            if (distance <= 200) { // Ampliar la zona de sensibilidad para seguir la línea
+                currentIndex++;
+                return true;
+            }
+            return false;
+        }
+
+        function drawProgress() {
+            if (progressPoints.length > 1) {
+                ctx.strokeStyle = '#00FFFF';
+                ctx.lineWidth = 15; // Mantener la línea de progreso ancha
+                ctx.beginPath();
+                ctx.moveTo(progressPoints[0].x, progressPoints[0].y);
+                for (let i = 1; i < progressPoints.length; i++) {
+                    ctx.lineTo(progressPoints[i].x, progressPoints[i].y);
+                }
+                ctx.stroke();
+            }
+        }
+
+        function onMove(event) {
+            let x, y;
+            if (event.touches && event.touches.length > 0) {
+                x = event.touches[0].clientX;
+                y = event.touches[0].clientY;
+            } else if (event.clientX !== undefined && event.clientY !== undefined) {
+                x = event.clientX;
+                y = event.clientY;
+            } else {
+                return;
+            }
+            if (isCursorNearCurrentPoint(x, y)) {
+                progressPoints.push(wavePoints[currentIndex]);
+                drawProgress();
+                indicator.style.left = x + 'px';
+                indicator.style.top = y + 'px';
+                indicator.style.display = 'block';
+                if (!oscillatorNodes) {
+                    oscillatorNodes = startBinauralOscillators();
+                }
+                if (oscillatorNodes) {
+                    let minFreq = 100;
+                    let maxFreq = 300;
+                    let baseFrequency = minFreq + (maxFreq - minFreq) * (currentIndex / wavePoints.length);
+                    let deltaFrequency = 2; // Frecuencia delta basada en la diferencia de tonos
+                    oscillatorNodes.leftOscillator.frequency.setValueAtTime(baseFrequency, audioContext.currentTime);
+                    oscillatorNodes.rightOscillator.frequency.setValueAtTime(baseFrequency + deltaFrequency, audioContext.currentTime);
+                }
+                if (currentIndex >= wavePoints.length) {
+                    paradiseImage.style.display = 'block';
+                    paradiseImage.classList.add('wave-movement');
+                    paradiseImage.style.opacity = 1;
+                    canvas.style.display = 'none';
+                    indicator.style.display = 'none';
+                    stopSound();
+                }
+            } else {
+                indicator.style.display = 'none';
+                stopSound();
+            }
+        }
+
+        canvas.addEventListener('mousemove', onMove);
+        canvas.addEventListener('touchmove', onMove, { passive: false });
+        startButton.addEventListener('click', startInteraction);
+    </script>
+</body>
+</html>
