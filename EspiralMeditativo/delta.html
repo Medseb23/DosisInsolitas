@@ -9,7 +9,7 @@
         body {
             margin: 0;
             overflow: hidden;
-            background-color: rgb(0, 0, 50); /* Color inicial (azul oscuro para inducir calma) */
+            background-color: rgb(0, 191, 255); /* Color inicial (azul claro) */
             font-family: Arial, sans-serif;
             color: #ffffff;
             transition: background-color 5s linear; /* Transición suave del color de fondo */
@@ -355,16 +355,14 @@
                 }
                 // Gradualmente oscurecer el fondo a medida que se avanza
                 let progress = currentIndex / wavePoints.length;
-                let colorValue = Math.floor(50 * (1 - progress));
+                let colorValue = Math.floor(191 + (255 - 191) * (1 - progress));
                 document.body.style.backgroundColor = `rgb(0, 0, ${colorValue})`;
                 
                 if (currentIndex >= wavePoints.length) {
-                    paradiseImage.style.display = 'block';
-                    paradiseImage.classList.add('wave-movement');
-                    paradiseImage.style.opacity = 1;
                     canvas.style.display = 'none';
                     indicator.style.display = 'none';
                     stopSound();
+                    document.body.style.backgroundColor = 'rgb(0, 0, 0)';
                     playFourthInterval(lastBaseFrequency);
                 }
             } else {
@@ -392,18 +390,4 @@
             leftOscillator.connect(leftGain).connect(leftPanner).connect(audioContext.destination);
             rightOscillator.connect(rightGain).connect(rightPanner).connect(audioContext.destination);
             leftOscillator.frequency.setValueAtTime(fourthFrequency / 4, audioContext.currentTime); // Dos octavas más bajas
-            rightOscillator.frequency.setValueAtTime((fourthFrequency / 4) + 2, audioContext.currentTime); // Mantener diferencia delta
-            leftOscillator.start();
-            rightOscillator.start();
-            setTimeout(() => {
-                leftOscillator.stop();
-                rightOscillator.stop();
-            }, meditationTime * 1000);
-        }
-
-        canvas.addEventListener('mousemove', onMove);
-        canvas.addEventListener('touchmove', onMove, { passive: false });
-        startButton.addEventListener('click', startInteraction);
-    </script>
-</body>
-</html>
+            rightOscillator.frequency.setValueAtTime((fourthFrequency /
