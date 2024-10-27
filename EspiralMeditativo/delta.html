@@ -279,13 +279,15 @@
         let lastBaseFrequency = 0; // Para almacenar la última frecuencia base alcanzada
 
         function startInteraction() {
-            const selectedTime = document.querySelector('input[name="meditationTime"]:checked').value;
-            meditationTime = parseInt(selectedTime);
-            welcomeMessage.style.display = 'none';
-            canvas.style.display = 'block';
-            resizeCanvas();
-            window.addEventListener('resize', resizeCanvas);
-            initAudio();
+            const selectedTimeElement = document.querySelector('input[name="meditationTime"]:checked');
+            if (selectedTimeElement) {
+                meditationTime = parseInt(selectedTimeElement.value);
+                welcomeMessage.style.display = 'none';
+                canvas.style.display = 'block';
+                resizeCanvas();
+                window.addEventListener('resize', resizeCanvas);
+                initAudio();
+            }
         }
 
         function stopSound() {
@@ -359,4 +361,32 @@
                 document.body.style.backgroundColor = `rgb(0, 0, ${colorValue})`;
                 
                 if (currentIndex >= wavePoints.length) {
-                    canvas.style.display
+                    canvas.style.display = 'none';
+                    indicator.style.display = 'none';
+                    stopSound();
+                    document.body.style.backgroundColor = 'rgb(0, 0, 0)';
+                    playFourthInterval(lastBaseFrequency);
+                }
+            } else {
+                indicator.style.display = 'none';
+                stopSound();
+            }
+        }
+
+        // Función para reproducir el intervalo de cuarta, manteniendo la diferencia delta
+        function playFourthInterval(baseFrequency) {
+            if (!audioContext) return;
+            let fourthFrequency = baseFrequency * (4 / 3); // Calcular la cuarta justa
+            const leftOscillator = audioContext.createOscillator();
+            const rightOscillator = audioContext.createOscillator();
+            leftOscillator.type = 'sine';
+            rightOscillator.type = 'sine';
+            const leftGain = audioContext.createGain();
+            const rightGain = audioContext.createGain();
+            leftGain.gain.value = 0.1;
+            rightGain.gain.value = 0.1;
+            const leftPanner = audioContext.createStereoPanner();
+            leftPanner.pan.setValueAtTime(-1, audioContext.currentTime);
+            const rightPanner = audioContext.createStereoPanner();
+            rightPanner.pan.setValueAtTime(1, audioContext.currentTime);
+            leftOsc
