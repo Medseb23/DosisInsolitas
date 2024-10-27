@@ -149,6 +149,19 @@
             display: block;
         }
     </style>
+    <script>
+        // Forzar la rotación horizontal en dispositivos móviles
+        window.addEventListener("load", function() {
+            if (window.innerHeight > window.innerWidth) {
+                alert("Para una mejor experiencia, por favor, rota tu dispositivo a modo horizontal.");
+            }
+        });
+        window.addEventListener("resize", function() {
+            if (window.innerHeight > window.innerWidth) {
+                alert("Para una mejor experiencia, por favor, rota tu dispositivo a modo horizontal.");
+            }
+        });
+    </script>
 </head>
 <body>
     <canvas id="canvas"></canvas>
@@ -285,7 +298,7 @@
             let dx = x - point.x;
             let dy = y - point.y;
             let distance = Math.sqrt(dx * dx + dy * dy);
-            if (distance <= 60) {
+            if (distance <= 100) { // Hacer más fácil seguir la línea
                 currentIndex++;
                 return true;
             }
