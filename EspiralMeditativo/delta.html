@@ -137,7 +137,7 @@
                 transform: translateX(0) scaleY(1);
             }
             50% {
-                transform: translateX(20px) scaleY(1.05);
+                transform: translateX(30px) scaleY(1.1);
             }
             100% {
                 transform: translateX(0) scaleY(1);
@@ -205,9 +205,9 @@
             ctx.lineWidth = 5;
             wavePoints = [];
             const centerX = width / 2;
-            const totalSteps = 2000;
-            const waveAmplitude = 100; // Amplitud de las ondas
-            const waveLength = 50; // Longitud de cada ciclo de onda
+            const totalSteps = 1000;
+            const waveAmplitude = Math.min(width, height) / 5; // Amplitud adaptativa
+            const waveLength = Math.min(width, height) / 10; // Longitud adaptativa
             ctx.beginPath();
             for (let i = 0; i <= totalSteps; i++) {
                 let t = i / totalSteps;
@@ -326,11 +326,12 @@
                     oscillatorNodes = startBinauralOscillators();
                 }
                 if (oscillatorNodes) {
-                    let minFreq = 0.5;
-                    let maxFreq = 4;
+                    let minFreq = 100;
+                    let maxFreq = 300;
                     let baseFrequency = minFreq + (maxFreq - minFreq) * (currentIndex / wavePoints.length);
+                    let deltaFrequency = 2; // Frecuencia delta basada en la diferencia de tonos
                     oscillatorNodes.leftOscillator.frequency.setValueAtTime(baseFrequency, audioContext.currentTime);
-                    oscillatorNodes.rightOscillator.frequency.setValueAtTime(baseFrequency + 0.25, audioContext.currentTime);
+                    oscillatorNodes.rightOscillator.frequency.setValueAtTime(baseFrequency + deltaFrequency, audioContext.currentTime);
                 }
                 if (currentIndex >= wavePoints.length) {
                     paradiseImage.style.display = 'block';
