@@ -151,14 +151,17 @@
     </style>
     <script>
         // Forzar la rotación horizontal en dispositivos móviles
+        let rotationAlertShown = false;
         window.addEventListener("load", function() {
-            if (window.innerHeight > window.innerWidth) {
+            if (!rotationAlertShown && window.innerHeight > window.innerWidth) {
                 alert("Para una mejor experiencia, por favor, rota tu dispositivo a modo horizontal.");
+                rotationAlertShown = true;
             }
         });
         window.addEventListener("resize", function() {
-            if (window.innerHeight > window.innerWidth) {
+            if (!rotationAlertShown && window.innerHeight > window.innerWidth) {
                 alert("Para una mejor experiencia, por favor, rota tu dispositivo a modo horizontal.");
+                rotationAlertShown = true;
             }
         });
     </script>
