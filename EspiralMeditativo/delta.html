@@ -9,9 +9,10 @@
         body {
             margin: 0;
             overflow: hidden;
-            background-color: rgb(0, 0, 50); /* Color inicial (azul oscuro para inducir calma) */
+            background-color: rgb(0, 0, 50); /* Color inicial */
             font-family: Arial, sans-serif;
             color: #ffffff;
+            transition: background-color 1s; /* Transición para el cambio de fondo */
         }
         #canvas {
             display: none;
@@ -64,58 +65,6 @@
             border-radius: 10px;
             cursor: pointer;
         }
-        /* Estilo para la imagen final */
-        #paradiseImage {
-            display: none;
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: opacity 5s;
-        }
-        /* Clase para la animación de ondas */
-        .wave-movement {
-            animation: waveEffect 40s infinite;
-            animation-timing-function: ease-in-out;
-        }
-        /* Estilo para la pantalla de agradecimiento */
-        #thankYouScreen {
-            display: none;
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #000000;
-            color: #ffffff;
-            text-align: center;
-            padding-top: 20%;
-            opacity: 0;
-            transition: opacity 2s;
-        }
-        #thankYouScreen h1 {
-            font-size: 32px;
-            margin-bottom: 20px;
-        }
-        #thankYouScreen img {
-            width: 200px;
-            height: auto;
-            cursor: pointer;
-        }
-        #thankYouScreen a {
-            display: inline-block;
-            margin-top: 20px;
-            padding: 15px 30px;
-            font-size: 20px;
-            background-color: #ffffff;
-            color: #000000;
-            border: none;
-            border-radius: 10px;
-            text-decoration: none;
-            cursor: pointer;
-        }
         /* Animación de pulso para el indicador visual */
         @keyframes pulse {
             0% {
@@ -131,22 +80,54 @@
                 opacity: 1;
             }
         }
-        /* Animación de efecto de ondas */
-        @keyframes waveEffect {
-            0% {
-                transform: translateX(0) scaleY(1);
+        /* Estilos para la imagen desplazable */
+        #scrollingImage {
+            display: none; /* Inicialmente oculto */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%; /* Cubrir todo el ancho */
+            height: 100%;
+            background-image: url('deltatile.jpg');
+            background-repeat: repeat-x; /* Repetir horizontalmente */
+            background-size: auto 100%; /* Ajustar el alto de la imagen al contenedor */
+            animation: scrollBackground 20s linear infinite;
+            opacity: 1; /* Aseguramos que la opacidad inicial sea 1 */
+        }
+        /* Animación para desplazar el fondo */
+        @keyframes scrollBackground {
+            from {
+                background-position: 0 0;
             }
-            50% {
-                transform: translateX(30px) scaleY(1.1);
-            }
-            100% {
-                transform: translateX(0) scaleY(1);
+            to {
+                background-position: -100% 0;
             }
         }
-        /* Clase para mostrar la pantalla de agradecimiento */
-        .show-thank-you {
-            opacity: 1;
-            display: block;
+        /* Estilo para la pantalla de agradecimiento */
+        #thankYouScreen {
+            display: none; /* Inicialmente oculto */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000000; /* Fondo negro */
+            color: #ffffff; /* Texto blanco */
+            text-align: center;
+            padding-top: 20%;
+        }
+        #thankYouScreen h1 {
+            font-size: 32px;
+            margin-bottom: 20px;
+        }
+        #acceptButton {
+            padding: 15px 30px;
+            font-size: 20px;
+            background-color: #ffffff;
+            color: #000000;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
         }
     </style>
     <script>
@@ -168,8 +149,14 @@
 </head>
 <body>
     <canvas id="canvas"></canvas>
-    <img id="paradiseImage" src="delta_waves.jpg" alt="Ondas Delta"> <!-- Imagen de ondas delta -->
     <div id="indicator"></div> <!-- Indicador visual -->
+    <!-- Contenedor de la imagen desplazable -->
+    <div id="scrollingImage"></div>
+    <!-- Pantalla de agradecimiento -->
+    <div id="thankYouScreen">
+        <h1>Muchas gracias por participar en esta experiencia</h1>
+        <button id="acceptButton">Aceptar</button>
+    </div>
     <!-- Contenedor del mensaje de bienvenida -->
     <div id="welcomeMessage">
         <h1>Bienvenidos a la Experiencia de Ondas Delta</h1>
@@ -185,27 +172,23 @@
         <br>
         <button id="startButton">Iniciar</button>
     </div>
-    <!-- Pantalla de agradecimiento -->
-    <div id="thankYouScreen">
-        <h1>Muchas gracias por participar de esta experiencia</h1>
-        <a href="https://dosisinsolitas.com" id="volverButton">Volver</a><br><br>
-        <a href="https://dosisinsolitas.com">
-            <img src="logo-dosisinsolitas.png" alt="Dosis Insolitas">
-        </a>
-    </div>
     <script>
         // JavaScript
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
         const indicator = document.getElementById('indicator');
         const startButton = document.getElementById('startButton');
-        const paradiseImage = document.getElementById('paradiseImage');
         const welcomeMessage = document.getElementById('welcomeMessage');
+        const scrollingImage = document.getElementById('scrollingImage');
         const thankYouScreen = document.getElementById('thankYouScreen');
-        const volverButton = document.getElementById('volverButton');
+        const acceptButton = document.getElementById('acceptButton');
         let width, height;
         let wavePoints = []; // Almacenar los puntos de las ondas
         let meditationTime = 1; // Tiempo de meditación seleccionado (por defecto 1 minuto)
+        let deltaFrequency = 2; // Frecuencia delta (2 Hz)
+        let pathCompleted = false; // Para asegurarnos de que solo se ejecute una vez
+        let oscillatorNodes = null;
+        let audioContext = null;
 
         function resizeCanvas() {
             width = canvas.width = window.innerWidth;
@@ -238,7 +221,6 @@
         // Variables para el seguimiento del progreso
         let currentIndex = 0;
         let progressPoints = [];
-        let audioContext = null;
 
         function initAudio() {
             if (!audioContext) {
@@ -274,7 +256,6 @@
             };
         }
 
-        let oscillatorNodes = null;
         function startInteraction() {
             const selectedTime = document.querySelector('input[name="meditationTime"]:checked').value;
             meditationTime = parseInt(selectedTime);
@@ -283,6 +264,29 @@
             resizeCanvas();
             window.addEventListener('resize', resizeCanvas);
             initAudio();
+
+            // Programar el fin de la meditación
+            let meditationDuration = meditationTime * 60 * 1000; // Convertir minutos a milisegundos
+            setTimeout(endMeditation, meditationDuration);
+        }
+
+        function endMeditation() {
+            // Gradualmente reducir el volumen en 5 segundos
+            if (oscillatorNodes) {
+                oscillatorNodes.leftGain.gain.linearRampToValueAtTime(0, audioContext.currentTime + 5);
+                oscillatorNodes.rightGain.gain.linearRampToValueAtTime(0, audioContext.currentTime + 5);
+            }
+
+            // Desvanecer la imagen en 5 segundos
+            scrollingImage.style.transition = 'opacity 5s';
+            scrollingImage.style.opacity = 0;
+
+            // Después de 5 segundos, ocultar la imagen y mostrar la pantalla de agradecimiento
+            setTimeout(() => {
+                scrollingImage.style.display = 'none';
+                // Mostrar la pantalla de agradecimiento
+                thankYouScreen.style.display = 'block';
+            }, 5000);
         }
 
         function stopSound() {
@@ -332,6 +336,34 @@
             } else {
                 return;
             }
+
+            if (currentIndex >= wavePoints.length && !pathCompleted) {
+                pathCompleted = true;
+
+                // Cambiar el sonido a una cuarta más alta manteniendo la vibración Delta
+                if (oscillatorNodes) {
+                    // Obtener la frecuencia base actual
+                    let baseFrequency = oscillatorNodes.leftOscillator.frequency.value;
+                    // Calcular la nueva frecuencia (una cuarta justa más alta)
+                    let newBaseFrequency = baseFrequency * (4 / 3);
+                    // Ajustar las frecuencias manteniendo deltaFrequency
+                    oscillatorNodes.leftOscillator.frequency.setValueAtTime(newBaseFrequency, audioContext.currentTime);
+                    oscillatorNodes.rightOscillator.frequency.setValueAtTime(newBaseFrequency + deltaFrequency, audioContext.currentTime);
+                }
+
+                // Transición de la pantalla a negro
+                document.body.style.backgroundColor = '#000000';
+
+                // Mostrar la imagen desplazable
+                scrollingImage.style.display = 'block';
+
+                // Ocultar elementos
+                canvas.style.display = 'none';
+                indicator.style.display = 'none';
+
+                return;
+            }
+
             if (isCursorNearCurrentPoint(x, y)) {
                 progressPoints.push(wavePoints[currentIndex]);
                 drawProgress();
@@ -345,17 +377,9 @@
                     let minFreq = 100;
                     let maxFreq = 300;
                     let baseFrequency = minFreq + (maxFreq - minFreq) * (currentIndex / wavePoints.length);
-                    let deltaFrequency = 2; // Frecuencia delta basada en la diferencia de tonos
+                    // Ajustar las frecuencias manteniendo la vibración Delta
                     oscillatorNodes.leftOscillator.frequency.setValueAtTime(baseFrequency, audioContext.currentTime);
                     oscillatorNodes.rightOscillator.frequency.setValueAtTime(baseFrequency + deltaFrequency, audioContext.currentTime);
-                }
-                if (currentIndex >= wavePoints.length) {
-                    paradiseImage.style.display = 'block';
-                    paradiseImage.classList.add('wave-movement');
-                    paradiseImage.style.opacity = 1;
-                    canvas.style.display = 'none';
-                    indicator.style.display = 'none';
-                    stopSound();
                 }
             } else {
                 indicator.style.display = 'none';
@@ -366,6 +390,11 @@
         canvas.addEventListener('mousemove', onMove);
         canvas.addEventListener('touchmove', onMove, { passive: false });
         startButton.addEventListener('click', startInteraction);
+
+        // Evento para el botón "Aceptar" en la pantalla de agradecimiento
+        acceptButton.addEventListener('click', () => {
+            window.location.href = 'https://dosisinsolitas.com';
+        });
     </script>
 </body>
 </html>
