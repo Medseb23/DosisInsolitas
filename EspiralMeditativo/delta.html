@@ -130,22 +130,6 @@
             cursor: pointer;
         }
     </style>
-    <script>
-        // Forzar la rotación horizontal en dispositivos móviles
-        let rotationAlertShown = false;
-        window.addEventListener("load", function() {
-            if (!rotationAlertShown && window.innerHeight > window.innerWidth) {
-                alert("Para una mejor experiencia, por favor, rota tu dispositivo a modo horizontal.");
-                rotationAlertShown = true;
-            }
-        });
-        window.addEventListener("resize", function() {
-            if (!rotationAlertShown && window.innerHeight > window.innerWidth) {
-                alert("Para una mejor experiencia, por favor, rota tu dispositivo a modo horizontal.");
-                rotationAlertShown = true;
-            }
-        });
-    </script>
 </head>
 <body>
     <canvas id="canvas"></canvas>
@@ -189,6 +173,7 @@
         let pathCompleted = false; // Para asegurarnos de que solo se ejecute una vez
         let oscillatorNodes = null;
         let audioContext = null;
+        let lastBaseFrequency = 0; // Para almacenar la última frecuencia base alcanzada
 
         function resizeCanvas() {
             width = canvas.width = window.innerWidth;
@@ -204,9 +189,9 @@
             ctx.lineWidth = 15; // Hacer las líneas más anchas
             wavePoints = [];
             const centerX = width / 2;
-            const totalSteps = 500; // Reducir la cantidad de pasos para hacer las ondas más amplias
-            const waveAmplitude = Math.min(width, height) / 3; // Aumentar la amplitud para hacer curvas más amplias
-            const waveLength = Math.min(width, height) / 5; // Aumentar la longitud de cada ciclo de onda
+            const totalSteps = 500;
+            const waveAmplitude = Math.min(width, height) / 3;
+            const waveLength = Math.min(width, height) / 5;
             ctx.beginPath();
             for (let i = 0; i <= totalSteps; i++) {
                 let t = i / totalSteps;
@@ -264,29 +249,6 @@
             resizeCanvas();
             window.addEventListener('resize', resizeCanvas);
             initAudio();
-
-            // Programar el fin de la meditación
-            let meditationDuration = meditationTime * 60 * 1000; // Convertir minutos a milisegundos
-            setTimeout(endMeditation, meditationDuration);
-        }
-
-        function endMeditation() {
-            // Gradualmente reducir el volumen en 5 segundos
-            if (oscillatorNodes) {
-                oscillatorNodes.leftGain.gain.linearRampToValueAtTime(0, audioContext.currentTime + 5);
-                oscillatorNodes.rightGain.gain.linearRampToValueAtTime(0, audioContext.currentTime + 5);
-            }
-
-            // Desvanecer la imagen en 5 segundos
-            scrollingImage.style.transition = 'opacity 5s';
-            scrollingImage.style.opacity = 0;
-
-            // Después de 5 segundos, ocultar la imagen y mostrar la pantalla de agradecimiento
-            setTimeout(() => {
-                scrollingImage.style.display = 'none';
-                // Mostrar la pantalla de agradecimiento
-                thankYouScreen.style.display = 'block';
-            }, 5000);
         }
 
         function stopSound() {
@@ -305,7 +267,7 @@
             let dx = x - point.x;
             let dy = y - point.y;
             let distance = Math.sqrt(dx * dx + dy * dy);
-            if (distance <= 200) { // Ampliar la zona de sensibilidad para seguir la línea
+            if (distance <= 200) {
                 currentIndex++;
                 return true;
             }
@@ -315,7 +277,7 @@
         function drawProgress() {
             if (progressPoints.length > 1) {
                 ctx.strokeStyle = '#00FFFF';
-                ctx.lineWidth = 15; // Mantener la línea de progreso ancha
+                ctx.lineWidth = 15;
                 ctx.beginPath();
                 ctx.moveTo(progressPoints[0].x, progressPoints[0].y);
                 for (let i = 1; i < progressPoints.length; i++) {
@@ -337,49 +299,46 @@
                 return;
             }
 
-            if (currentIndex >= wavePoints.length && !pathCompleted) {
-                pathCompleted = true;
-
-                // Cambiar el sonido a una cuarta más alta manteniendo la vibración Delta
-                if (oscillatorNodes) {
-                    // Obtener la frecuencia base actual
-                    let baseFrequency = oscillatorNodes.leftOscillator.frequency.value;
-                    // Calcular la nueva frecuencia (una cuarta justa más alta)
-                    let newBaseFrequency = baseFrequency * (4 / 3);
-                    // Ajustar las frecuencias manteniendo deltaFrequency
-                    oscillatorNodes.leftOscillator.frequency.setValueAtTime(newBaseFrequency, audioContext.currentTime);
-                    oscillatorNodes.rightOscillator.frequency.setValueAtTime(newBaseFrequency + deltaFrequency, audioContext.currentTime);
-                }
-
-                // Transición de la pantalla a negro
-                document.body.style.backgroundColor = '#000000';
-
-                // Mostrar la imagen desplazable
-                scrollingImage.style.display = 'block';
-
-                // Ocultar elementos
-                canvas.style.display = 'none';
-                indicator.style.display = 'none';
-
-                return;
-            }
-
             if (isCursorNearCurrentPoint(x, y)) {
-                progressPoints.push(wavePoints[currentIndex]);
+                progressPoints.push(wavePoints[currentIndex - 1]); // Ajustamos el índice
                 drawProgress();
                 indicator.style.left = x + 'px';
                 indicator.style.top = y + 'px';
                 indicator.style.display = 'block';
+
+                // Iniciar los osciladores binaurales si no están activos
                 if (!oscillatorNodes) {
                     oscillatorNodes = startBinauralOscillators();
                 }
+
+                // Actualizar la frecuencia base según el progreso
                 if (oscillatorNodes) {
+                    let progress = currentIndex / wavePoints.length;
                     let minFreq = 100;
                     let maxFreq = 300;
-                    let baseFrequency = minFreq + (maxFreq - minFreq) * (currentIndex / wavePoints.length);
-                    // Ajustar las frecuencias manteniendo la vibración Delta
+                    let baseFrequency = minFreq + (maxFreq - minFreq) * progress;
+                    lastBaseFrequency = baseFrequency;
                     oscillatorNodes.leftOscillator.frequency.setValueAtTime(baseFrequency, audioContext.currentTime);
                     oscillatorNodes.rightOscillator.frequency.setValueAtTime(baseFrequency + deltaFrequency, audioContext.currentTime);
+                }
+
+                // Si el usuario ha alcanzado el final del camino
+                if (currentIndex >= wavePoints.length && !pathCompleted) {
+                    pathCompleted = true;
+                    // Detener el sonido actual
+                    stopSound();
+                    // Reproducir el sonido final
+                    playFinalSound(lastBaseFrequency);
+                    // Transición de la pantalla a negro
+                    document.body.style.backgroundColor = '#000000';
+                    // Mostrar la imagen desplazable
+                    scrollingImage.style.display = 'block';
+                    // Ocultar elementos
+                    canvas.style.display = 'none';
+                    indicator.style.display = 'none';
+                    // Programar el fin de la meditación
+                    let meditationDuration = meditationTime * 60 * 1000;
+                    setTimeout(endMeditation, meditationDuration);
                 }
             } else {
                 indicator.style.display = 'none';
@@ -387,8 +346,73 @@
             }
         }
 
+        function playFinalSound(baseFrequency) {
+            if (!audioContext) return;
+            // Calcular la frecuencia de la cuarta justa (ratio 4:3)
+            let fourthFrequency = baseFrequency * (4 / 3);
+            // Crear osciladores para ambos canales
+            const leftOscillator = audioContext.createOscillator();
+            const rightOscillator = audioContext.createOscillator();
+            leftOscillator.type = 'sine';
+            rightOscillator.type = 'sine';
+            // Mantener la diferencia delta
+            leftOscillator.frequency.setValueAtTime(fourthFrequency, audioContext.currentTime);
+            rightOscillator.frequency.setValueAtTime(fourthFrequency + deltaFrequency, audioContext.currentTime);
+            // Crear nodos de ganancia y paneo
+            const leftGain = audioContext.createGain();
+            const rightGain = audioContext.createGain();
+            leftGain.gain.value = 0.1;
+            rightGain.gain.value = 0.1;
+            const leftPanner = audioContext.createStereoPanner();
+            leftPanner.pan.setValueAtTime(-1, audioContext.currentTime);
+            const rightPanner = audioContext.createStereoPanner();
+            rightPanner.pan.setValueAtTime(1, audioContext.currentTime);
+            // Conectar nodos
+            leftOscillator.connect(leftGain).connect(leftPanner).connect(audioContext.destination);
+            rightOscillator.connect(rightGain).connect(rightPanner).connect(audioContext.destination);
+            leftOscillator.start();
+            rightOscillator.start();
+            // Guardar los osciladores para el fade out
+            oscillatorNodes = {
+                leftOscillator: leftOscillator,
+                rightOscillator: rightOscillator,
+                leftGain: leftGain,
+                rightGain: rightGain
+            };
+        }
+
+        function endMeditation() {
+            // Gradualmente reducir el volumen en 5 segundos
+            if (oscillatorNodes) {
+                oscillatorNodes.leftGain.gain.linearRampToValueAtTime(0, audioContext.currentTime + 5);
+                oscillatorNodes.rightGain.gain.linearRampToValueAtTime(0, audioContext.currentTime + 5);
+            }
+            // Desvanecer la imagen en 5 segundos
+            scrollingImage.style.transition = 'opacity 5s';
+            scrollingImage.style.opacity = 0;
+            // Después de 5 segundos, ocultar la imagen y mostrar la pantalla de agradecimiento
+            setTimeout(() => {
+                scrollingImage.style.display = 'none';
+                // Mostrar la pantalla de agradecimiento
+                thankYouScreen.style.display = 'block';
+            }, 5000);
+        }
+
         canvas.addEventListener('mousemove', onMove);
         canvas.addEventListener('touchmove', onMove, { passive: false });
+        canvas.addEventListener('touchstart', onMove, { passive: false });
+        canvas.addEventListener('mousedown', onMove);
+        canvas.addEventListener('mouseup', function() {
+            stopSound();
+        });
+        canvas.addEventListener('touchend', function() {
+            stopSound();
+        }, { passive: false });
+        canvas.addEventListener('touchcancel', function() {
+            stopSound();
+        }, { passive: false });
+
+        // Agregar evento al botón de inicio
         startButton.addEventListener('click', startInteraction);
 
         // Evento para el botón "Aceptar" en la pantalla de agradecimiento
