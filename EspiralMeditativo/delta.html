@@ -218,9 +218,9 @@
             ctx.lineWidth = 5;
             wavePoints = [];
             const centerX = width / 2;
-            const totalSteps = 1000;
-            const waveAmplitude = Math.min(width, height) / 5; // Amplitud adaptativa
-            const waveLength = Math.min(width, height) / 10; // Longitud adaptativa
+            const totalSteps = 500; // Reducir la cantidad de pasos para hacer las ondas más amplias
+            const waveAmplitude = Math.min(width, height) / 3; // Aumentar la amplitud para hacer curvas más amplias
+            const waveLength = Math.min(width, height) / 5; // Aumentar la longitud de cada ciclo de onda
             ctx.beginPath();
             for (let i = 0; i <= totalSteps; i++) {
                 let t = i / totalSteps;
