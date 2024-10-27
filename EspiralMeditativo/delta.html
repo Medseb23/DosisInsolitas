@@ -12,6 +12,7 @@
             background-color: rgb(0, 0, 50); /* Color inicial (azul oscuro para inducir calma) */
             font-family: Arial, sans-serif;
             color: #ffffff;
+            transition: background-color 5s linear; /* Transición suave del color de fondo */
         }
         #canvas {
             display: none;
@@ -275,6 +276,8 @@
         }
 
         let oscillatorNodes = null;
+        let lastBaseFrequency = 0; // Para almacenar la última frecuencia base alcanzada
+
         function startInteraction() {
             const selectedTime = document.querySelector('input[name="meditationTime"]:checked').value;
             meditationTime = parseInt(selectedTime);
@@ -345,10 +348,16 @@
                     let minFreq = 100;
                     let maxFreq = 300;
                     let baseFrequency = minFreq + (maxFreq - minFreq) * (currentIndex / wavePoints.length);
+                    lastBaseFrequency = baseFrequency; // Guardar la última frecuencia base
                     let deltaFrequency = 2; // Frecuencia delta basada en la diferencia de tonos
                     oscillatorNodes.leftOscillator.frequency.setValueAtTime(baseFrequency, audioContext.currentTime);
                     oscillatorNodes.rightOscillator.frequency.setValueAtTime(baseFrequency + deltaFrequency, audioContext.currentTime);
                 }
+                // Gradualmente oscurecer el fondo a medida que se avanza
+                let progress = currentIndex / wavePoints.length;
+                let colorValue = Math.floor(50 * (1 - progress));
+                document.body.style.backgroundColor = `rgb(0, 0, ${colorValue})`;
+                
                 if (currentIndex >= wavePoints.length) {
                     paradiseImage.style.display = 'block';
                     paradiseImage.classList.add('wave-movement');
@@ -356,11 +365,40 @@
                     canvas.style.display = 'none';
                     indicator.style.display = 'none';
                     stopSound();
+                    playFourthInterval(lastBaseFrequency);
                 }
             } else {
                 indicator.style.display = 'none';
                 stopSound();
             }
+        }
+
+        // Función para reproducir el intervalo de cuarta, manteniendo la diferencia delta
+        function playFourthInterval(baseFrequency) {
+            if (!audioContext) return;
+            let fourthFrequency = baseFrequency * (4 / 3); // Calcular la cuarta justa
+            const leftOscillator = audioContext.createOscillator();
+            const rightOscillator = audioContext.createOscillator();
+            leftOscillator.type = 'sine';
+            rightOscillator.type = 'sine';
+            const leftGain = audioContext.createGain();
+            const rightGain = audioContext.createGain();
+            leftGain.gain.value = 0.1;
+            rightGain.gain.value = 0.1;
+            const leftPanner = audioContext.createStereoPanner();
+            leftPanner.pan.setValueAtTime(-1, audioContext.currentTime);
+            const rightPanner = audioContext.createStereoPanner();
+            rightPanner.pan.setValueAtTime(1, audioContext.currentTime);
+            leftOscillator.connect(leftGain).connect(leftPanner).connect(audioContext.destination);
+            rightOscillator.connect(rightGain).connect(rightPanner).connect(audioContext.destination);
+            leftOscillator.frequency.setValueAtTime(fourthFrequency / 4, audioContext.currentTime); // Dos octavas más bajas
+            rightOscillator.frequency.setValueAtTime((fourthFrequency / 4) + 2, audioContext.currentTime); // Mantener diferencia delta
+            leftOscillator.start();
+            rightOscillator.start();
+            setTimeout(() => {
+                leftOscillator.stop();
+                rightOscillator.stop();
+            }, meditationTime * 1000);
         }
 
         canvas.addEventListener('mousemove', onMove);
