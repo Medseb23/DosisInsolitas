@@ -151,6 +151,7 @@
         let oscillatorNodes = null;
         let audioContext = null;
         let lastBaseFrequency = 0;
+        let finalOscillatorNodes = null;
 
         function resizeCanvas() {
             width = canvas.width = window.innerWidth;
@@ -224,6 +225,47 @@
             resizeCanvas();
             window.addEventListener('resize', resizeCanvas);
             initAudio();
+            initFinalOscillators(); // Inicializar osciladores finales
+        }
+
+        function initFinalOscillators() {
+            // Crear osciladores y nodos para el sonido final
+            const leftOscillator = audioContext.createOscillator();
+            const rightOscillator = audioContext.createOscillator();
+            leftOscillator.type = 'sine';
+            rightOscillator.type = 'sine';
+
+            // Configurar frecuencias iniciales (se ajustarán más tarde)
+            leftOscillator.frequency.setValueAtTime(0, audioContext.currentTime);
+            rightOscillator.frequency.setValueAtTime(0, audioContext.currentTime);
+
+            // Crear nodos de ganancia y establecer ganancia en 0
+            const leftGain = audioContext.createGain();
+            const rightGain = audioContext.createGain();
+            leftGain.gain.value = 0;
+            rightGain.gain.value = 0;
+
+            // Configurar paneo estéreo
+            const leftPanner = audioContext.createStereoPanner();
+            leftPanner.pan.setValueAtTime(-1, audioContext.currentTime);
+            const rightPanner = audioContext.createStereoPanner();
+            rightPanner.pan.setValueAtTime(1, audioContext.currentTime);
+
+            // Conectar nodos
+            leftOscillator.connect(leftGain).connect(leftPanner).connect(audioContext.destination);
+            rightOscillator.connect(rightGain).connect(rightPanner).connect(audioContext.destination);
+
+            // Arrancar osciladores
+            leftOscillator.start();
+            rightOscillator.start();
+
+            // Guardar los nodos para usarlos más tarde
+            finalOscillatorNodes = {
+                leftOscillator,
+                rightOscillator,
+                leftGain,
+                rightGain
+            };
         }
 
         function stopSound() {
@@ -309,7 +351,7 @@
                     canvas.style.display = 'none';
                     indicator.style.display = 'none';
 
-                    // Iniciar el sonido final directamente dentro del evento de usuario
+                    // Iniciar el sonido final
                     playFinalSound(lastBaseFrequency);
 
                     // Programar el fin de la meditación
@@ -330,56 +372,29 @@
                 audioContext.resume();
             }
 
-            // Calcular la frecuencia de la cuarta justa (ratio 4:3)
-            let fourthFrequency = baseFrequency * (4 / 3);
+            // Calcular la frecuencia de la cuarta justa y reducir dos octavas
+            let fourthFrequency = baseFrequency * (4 / 3) / 4;
 
-            // Reducir dos octavas (dividir la frecuencia por 4)
-            fourthFrequency = fourthFrequency / 4;
+            // Establecer las frecuencias de los osciladores finales
+            finalOscillatorNodes.leftOscillator.frequency.setValueAtTime(fourthFrequency, audioContext.currentTime);
+            finalOscillatorNodes.rightOscillator.frequency.setValueAtTime(fourthFrequency + deltaFrequency, audioContext.currentTime);
 
-            // Crear osciladores para ambos canales
-            const leftOscillator = audioContext.createOscillator();
-            const rightOscillator = audioContext.createOscillator();
-            leftOscillator.type = 'sine';
-            rightOscillator.type = 'sine';
+            // Realizar fade-in en la ganancia
+            finalOscillatorNodes.leftGain.gain.setValueAtTime(0, audioContext.currentTime);
+            finalOscillatorNodes.leftGain.gain.linearRampToValueAtTime(0.1, audioContext.currentTime + 1);
+            finalOscillatorNodes.rightGain.gain.setValueAtTime(0, audioContext.currentTime);
+            finalOscillatorNodes.rightGain.gain.linearRampToValueAtTime(0.1, audioContext.currentTime + 1);
 
-            // Mantener la diferencia delta
-            leftOscillator.frequency.setValueAtTime(fourthFrequency, audioContext.currentTime);
-            rightOscillator.frequency.setValueAtTime(fourthFrequency + deltaFrequency, audioContext.currentTime);
-
-            // Crear nodos de ganancia y paneo
-            const leftGain = audioContext.createGain();
-            const rightGain = audioContext.createGain();
-            leftGain.gain.value = 0.1;
-            rightGain.gain.value = 0.1;
-
-            const leftPanner = audioContext.createStereoPanner();
-            leftPanner.pan.setValueAtTime(-1, audioContext.currentTime);
-            const rightPanner = audioContext.createStereoPanner();
-            rightPanner.pan.setValueAtTime(1, audioContext.currentTime);
-
-            // Conectar nodos
-            leftOscillator.connect(leftGain).connect(leftPanner).connect(audioContext.destination);
-            rightOscillator.connect(rightGain).connect(rightPanner).connect(audioContext.destination);
-
-            leftOscillator.start();
-            rightOscillator.start();
-
-            // Guardar los osciladores para el fade out
-            oscillatorNodes = {
-                leftOscillator: leftOscillator,
-                rightOscillator: rightOscillator,
-                leftGain: leftGain,
-                rightGain: rightGain
-            };
-
-            // Programar el fade out y detener los osciladores al final del tiempo de meditación
+            // Programar fade-out y detener osciladores al final de la meditación
             const meditationDuration = meditationTime * 60; // en segundos
-            const fadeOutDuration = 5; // Duración del fade out en segundos
+            const fadeOutDuration = 5; // Duración del fade-out en segundos
+
             setTimeout(function() {
-                fadeOutSound(leftGain, rightGain, fadeOutDuration);
+                fadeOutSound(finalOscillatorNodes.leftGain, finalOscillatorNodes.rightGain, fadeOutDuration);
             }, (meditationDuration - fadeOutDuration) * 1000);
-            leftOscillator.stop(audioContext.currentTime + meditationDuration);
-            rightOscillator.stop(audioContext.currentTime + meditationDuration);
+
+            finalOscillatorNodes.leftOscillator.stop(audioContext.currentTime + meditationDuration);
+            finalOscillatorNodes.rightOscillator.stop(audioContext.currentTime + meditationDuration);
         }
 
         function fadeOutSound(leftGain, rightGain, fadeOutDuration) {
