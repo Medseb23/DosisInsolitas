@@ -69,31 +69,43 @@
         }
         /* Estilos para la imagen desplazable */
         #scrollingImage {
-            display: none;
+            display: none; /* Inicialmente oculto */
             position: fixed;
             top: 0;
             left: 0;
-            overflow: hidden; /* Ocultar contenido que se sale del contenedor */
             width: 100%;
             height: 100%;
+            overflow: hidden; /* Ocultar desbordamientos */
         }
 
-        .scrolling-container {
+        .image-container {
             display: flex;
-            width: 200%; /* Duplicar el ancho para acomodar dos imágenes */
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 200%; /* Doble del ancho de la pantalla */
             height: 100%;
-            animation: scroll 20s linear infinite;
         }
 
-        .scrolling-container img {
-            width: 50%; /* Cada imagen ocupa la mitad del ancho del contenedor */
+        .scrolling-img {
+            width: 50%; /* La mitad del contenedor */
             height: 100%;
-            object-fit: cover; /* Asegurar que la imagen cubra todo el espacio */
+            flex-shrink: 0;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
         }
 
+        /* Animación de desplazamiento horizontal */
         @keyframes scroll {
-            from { transform: translateX(0); }
-            to { transform: translateX(-50%); } /* Mover hacia la izquierda un 50% del ancho */
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        /* Animación de desplazamiento vertical */
+        @keyframes scrollVertical {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-50%); }
         }
 
         /* Estilo para la pantalla de agradecimiento */
@@ -129,9 +141,9 @@
     <div id="indicator"></div>
     <!-- Contenedor de la imagen desplazable -->
     <div id="scrollingImage">
-        <div class="scrolling-container">
-            <img src="deltatile.jpg" alt="Scrolling Image">
-            <img src="deltatile.jpg" alt="Scrolling Image">
+        <div class="image-container">
+            <div class="scrolling-img"></div>
+            <div class="scrolling-img"></div>
         </div>
     </div>
     <!-- Pantalla de agradecimiento -->
@@ -164,6 +176,8 @@
         const scrollingImage = document.getElementById('scrollingImage');
         const thankYouScreen = document.getElementById('thankYouScreen');
         const acceptButton = document.getElementById('acceptButton');
+        const imageContainer = document.querySelector('.image-container');
+        const scrollingImgs = document.querySelectorAll('.scrolling-img');
         let width, height;
         let wavePoints = [];
         let meditationTime = 1;
@@ -173,6 +187,7 @@
         let audioContext = null;
         let lastBaseFrequency = 0;
         let finalOscillatorNodes = null;
+        let isVerticalScroll = false;
 
         function resizeCanvas() {
             width = canvas.width = window.innerWidth;
@@ -247,6 +262,7 @@
             window.addEventListener('resize', resizeCanvas);
             initAudio();
             initFinalOscillators(); // Inicializar osciladores finales
+            adjustBackground(); // Ajustar el fondo desplazable
         }
 
         function initFinalOscillators() {
@@ -366,6 +382,9 @@
                     // Detener el sonido actual
                     stopSound();
 
+                    // Ajustar el fondo desplazable antes de mostrarlo
+                    adjustBackground();
+
                     // Mostrar la imagen desplazable inmediatamente
                     document.body.style.backgroundColor = '#000000';
                     scrollingImage.style.display = 'block';
@@ -435,6 +454,50 @@
                 thankYouScreen.style.display = 'block';
             }, 5000);
         }
+
+        // Función para ajustar el fondo desplazable
+        function adjustBackground() {
+            const img = new Image();
+            img.src = 'deltatile.jpg';
+
+            img.onload = function() {
+                const imgAspectRatio = img.width / img.height;
+                const windowAspectRatio = window.innerWidth / window.innerHeight;
+
+                if (windowAspectRatio >= imgAspectRatio) {
+                    // La pantalla es más ancha o igual que la imagen
+                    isVerticalScroll = false;
+                    scrollingImgs.forEach((imgDiv) => {
+                        imgDiv.style.backgroundImage = `url('deltatile.jpg')`;
+                        imgDiv.style.backgroundSize = 'auto 100%';
+                    });
+                    imageContainer.style.flexDirection = 'row';
+                    imageContainer.style.width = '200%';
+                    imageContainer.style.height = '100%';
+                    imageContainer.style.animation = 'scroll 20s linear infinite';
+                    imageContainer.style.animationName = 'scroll';
+                } else {
+                    // La pantalla es más alta que la imagen
+                    isVerticalScroll = true;
+                    scrollingImgs.forEach((imgDiv) => {
+                        imgDiv.style.backgroundImage = `url('deltatile.jpg')`;
+                        imgDiv.style.backgroundSize = '100% auto';
+                    });
+                    imageContainer.style.flexDirection = 'column';
+                    imageContainer.style.width = '100%';
+                    imageContainer.style.height = '200%';
+                    imageContainer.style.animation = 'scrollVertical 20s linear infinite';
+                    imageContainer.style.animationName = 'scrollVertical';
+                }
+            };
+        }
+
+        // Llamar a la función al cargar y al redimensionar
+        window.addEventListener('load', () => {
+            adjustBackground();
+        });
+
+        window.addEventListener('resize', adjustBackground);
 
         canvas.addEventListener('mousemove', onMove);
         canvas.addEventListener('touchmove', onMove, { passive: false });
