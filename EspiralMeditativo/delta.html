@@ -5,7 +5,7 @@
     <title>Ondas Delta para Sueño Profundo y Relajación</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        /* Estilos CSS (sin cambios significativos) */
+        /* Estilos CSS */
         body {
             margin: 0;
             overflow: hidden;
@@ -333,6 +333,9 @@
             // Calcular la frecuencia de la cuarta justa (ratio 4:3)
             let fourthFrequency = baseFrequency * (4 / 3);
 
+            // Reducir dos octavas (dividir la frecuencia por 4)
+            fourthFrequency = fourthFrequency / 4;
+
             // Crear osciladores para ambos canales
             const leftOscillator = audioContext.createOscillator();
             const rightOscillator = audioContext.createOscillator();
@@ -346,14 +349,8 @@
             // Crear nodos de ganancia y paneo
             const leftGain = audioContext.createGain();
             const rightGain = audioContext.createGain();
-
-            // Iniciar con ganancia 0 para el fade-in
-            leftGain.gain.setValueAtTime(0, audioContext.currentTime);
-            rightGain.gain.setValueAtTime(0, audioContext.currentTime);
-
-            // Realizar fade-in en 1 segundo
-            leftGain.gain.linearRampToValueAtTime(0.1, audioContext.currentTime + 1);
-            rightGain.gain.linearRampToValueAtTime(0.1, audioContext.currentTime + 1);
+            leftGain.gain.value = 0.1;
+            rightGain.gain.value = 0.1;
 
             const leftPanner = audioContext.createStereoPanner();
             leftPanner.pan.setValueAtTime(-1, audioContext.currentTime);
@@ -374,19 +371,26 @@
                 leftGain: leftGain,
                 rightGain: rightGain
             };
+
+            // Programar el fade out y detener los osciladores al final del tiempo de meditación
+            const meditationDuration = meditationTime * 60; // en segundos
+            const fadeOutDuration = 5; // Duración del fade out en segundos
+            setTimeout(function() {
+                fadeOutSound(leftGain, rightGain, fadeOutDuration);
+            }, (meditationDuration - fadeOutDuration) * 1000);
+            leftOscillator.stop(audioContext.currentTime + meditationDuration);
+            rightOscillator.stop(audioContext.currentTime + meditationDuration);
+        }
+
+        function fadeOutSound(leftGain, rightGain, fadeOutDuration) {
+            const currentTime = audioContext.currentTime;
+            leftGain.gain.setValueAtTime(leftGain.gain.value, currentTime);
+            leftGain.gain.linearRampToValueAtTime(0, currentTime + fadeOutDuration);
+            rightGain.gain.setValueAtTime(rightGain.gain.value, currentTime);
+            rightGain.gain.linearRampToValueAtTime(0, currentTime + fadeOutDuration);
         }
 
         function endMeditation() {
-            if (oscillatorNodes) {
-                const endTime = audioContext.currentTime + 5;
-                oscillatorNodes.leftGain.gain.setValueAtTime(oscillatorNodes.leftGain.gain.value, audioContext.currentTime);
-                oscillatorNodes.leftGain.gain.linearRampToValueAtTime(0, endTime);
-                oscillatorNodes.rightGain.gain.setValueAtTime(oscillatorNodes.rightGain.gain.value, audioContext.currentTime);
-                oscillatorNodes.rightGain.gain.linearRampToValueAtTime(0, endTime);
-                // Detener los osciladores después del fade out
-                oscillatorNodes.leftOscillator.stop(endTime);
-                oscillatorNodes.rightOscillator.stop(endTime);
-            }
             // Desvanecer la imagen en 5 segundos
             scrollingImage.style.transition = 'opacity 5s';
             scrollingImage.style.opacity = 0;
