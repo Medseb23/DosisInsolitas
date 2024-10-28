@@ -67,23 +67,36 @@
             50% { transform: scale(1.5); opacity: 0.5; }
             100% { transform: scale(1); opacity: 1; }
         }
+        /* Estilos para la imagen desplazable */
         #scrollingImage {
             display: none;
             position: fixed;
             top: 0;
             left: 0;
+            overflow: hidden; /* Ocultar contenido que se sale del contenedor */
             width: 100%;
             height: 100%;
-            background-image: url('deltatile.jpg');
-            background-repeat: repeat-x;
-            background-size: auto 100%;
-            animation: scrollBackground 20s linear infinite;
-            opacity: 1;
         }
-        @keyframes scrollBackground {
-            from { background-position: 0 0; }
-            to { background-position: -100% 0; }
+
+        .scrolling-container {
+            display: flex;
+            width: 200%; /* Duplicar el ancho para acomodar dos imágenes */
+            height: 100%;
+            animation: scroll 20s linear infinite;
         }
+
+        .scrolling-container img {
+            width: 50%; /* Cada imagen ocupa la mitad del ancho del contenedor */
+            height: 100%;
+            object-fit: cover; /* Asegurar que la imagen cubra todo el espacio */
+        }
+
+        @keyframes scroll {
+            from { transform: translateX(0); }
+            to { transform: translateX(-50%); } /* Mover hacia la izquierda un 50% del ancho */
+        }
+
+        /* Estilo para la pantalla de agradecimiento */
         #thankYouScreen {
             display: none;
             position: fixed;
@@ -114,11 +127,19 @@
 <body>
     <canvas id="canvas"></canvas>
     <div id="indicator"></div>
-    <div id="scrollingImage"></div>
+    <!-- Contenedor de la imagen desplazable -->
+    <div id="scrollingImage">
+        <div class="scrolling-container">
+            <img src="deltatile.jpg" alt="Scrolling Image">
+            <img src="deltatile.jpg" alt="Scrolling Image">
+        </div>
+    </div>
+    <!-- Pantalla de agradecimiento -->
     <div id="thankYouScreen">
         <h1>Muchas gracias por participar en esta experiencia</h1>
         <button id="acceptButton">Aceptar</button>
     </div>
+    <!-- Contenedor del mensaje de bienvenida -->
     <div id="welcomeMessage">
         <h1>Bienvenidos a la Experiencia de Ondas Delta</h1>
         <p>
