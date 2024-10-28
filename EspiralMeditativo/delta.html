@@ -73,39 +73,33 @@
             position: fixed;
             top: 0;
             left: 0;
+            overflow: hidden; /* Ocultar desbordamientos */
             width: 100%;
             height: 100%;
-            overflow: hidden; /* Ocultar desbordamientos */
         }
 
         .image-container {
-            display: flex;
             position: absolute;
             top: 0;
             left: 0;
-            width: 200%; /* Doble del ancho de la pantalla */
-            height: 100%;
+            display: flex;
         }
 
         .scrolling-img {
-            width: 50%; /* La mitad del contenedor */
-            height: 100%;
             flex-shrink: 0;
-            background-size: cover;
-            background-position: center;
             background-repeat: no-repeat;
+            background-size: contain;
+            background-position: center;
         }
 
-        /* Animación de desplazamiento horizontal */
-        @keyframes scroll {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
+        @keyframes scrollHorizontal {
+            from { transform: translateX(0); }
+            to { transform: translateX(-50%); }
         }
 
-        /* Animación de desplazamiento vertical */
         @keyframes scrollVertical {
-            0% { transform: translateY(0); }
-            100% { transform: translateY(-50%); }
+            from { transform: translateY(0); }
+            to { transform: translateY(-50%); }
         }
 
         /* Estilo para la pantalla de agradecimiento */
@@ -461,33 +455,67 @@
             img.src = 'deltatile.jpg';
 
             img.onload = function() {
-                const imgAspectRatio = img.width / img.height;
-                const windowAspectRatio = window.innerWidth / window.innerHeight;
+                const imgWidth = img.width;
+                const imgHeight = img.height;
+                const windowWidth = window.innerWidth;
+                const windowHeight = window.innerHeight;
 
-                if (windowAspectRatio >= imgAspectRatio) {
-                    // La pantalla es más ancha o igual que la imagen
-                    isVerticalScroll = false;
-                    scrollingImgs.forEach((imgDiv) => {
-                        imgDiv.style.backgroundImage = `url('deltatile.jpg')`;
-                        imgDiv.style.backgroundSize = 'auto 100%';
-                    });
-                    imageContainer.style.flexDirection = 'row';
-                    imageContainer.style.width = '200%';
-                    imageContainer.style.height = '100%';
-                    imageContainer.style.animation = 'scroll 20s linear infinite';
-                    imageContainer.style.animationName = 'scroll';
+                // Calcular escala para ajustar la imagen al tamaño de la ventana
+                const scaleX = windowWidth / imgWidth;
+                const scaleY = windowHeight / imgHeight;
+                let scale;
+
+                if (windowWidth >= windowHeight) {
+                    // Pantalla horizontal
+                    scale = scaleY;
                 } else {
-                    // La pantalla es más alta que la imagen
+                    // Pantalla vertical
+                    scale = scaleX;
+                }
+
+                const scaledWidth = imgWidth * scale;
+                const scaledHeight = imgHeight * scale;
+
+                // Establecer tamaños exactos en píxeles
+                scrollingImage.style.width = `${windowWidth}px`;
+                scrollingImage.style.height = `${windowHeight}px`;
+
+                scrollingImage.style.overflow = 'hidden';
+
+                scrollingImgs.forEach((imgDiv) => {
+                    imgDiv.style.width = `${scaledWidth}px`;
+                    imgDiv.style.height = `${scaledHeight}px`;
+                    imgDiv.style.backgroundImage = `url('deltatile.jpg')`;
+                    imgDiv.style.backgroundSize = 'contain';
+                    imgDiv.style.backgroundRepeat = 'no-repeat';
+                    imgDiv.style.backgroundPosition = 'center';
+                });
+
+                // Ajustar animación
+                if (windowWidth >= windowHeight) {
+                    // Desplazamiento horizontal
+                    isVerticalScroll = false;
+                    imageContainer.style.flexDirection = 'row';
+                    imageContainer.style.width = `${scaledWidth * 2}px`;
+                    imageContainer.style.height = `${scaledHeight}px`;
+                    imageContainer.style.animation = `scrollHorizontal 20s linear infinite`;
+
+                    // Centrar verticalmente
+                    const topOffset = (windowHeight - scaledHeight) / 2;
+                    imageContainer.style.top = `${topOffset}px`;
+                    imageContainer.style.left = `0px`;
+                } else {
+                    // Desplazamiento vertical
                     isVerticalScroll = true;
-                    scrollingImgs.forEach((imgDiv) => {
-                        imgDiv.style.backgroundImage = `url('deltatile.jpg')`;
-                        imgDiv.style.backgroundSize = '100% auto';
-                    });
                     imageContainer.style.flexDirection = 'column';
-                    imageContainer.style.width = '100%';
-                    imageContainer.style.height = '200%';
-                    imageContainer.style.animation = 'scrollVertical 20s linear infinite';
-                    imageContainer.style.animationName = 'scrollVertical';
+                    imageContainer.style.width = `${scaledWidth}px`;
+                    imageContainer.style.height = `${scaledHeight * 2}px`;
+                    imageContainer.style.animation = `scrollVertical 20s linear infinite`;
+
+                    // Centrar horizontalmente
+                    const leftOffset = (windowWidth - scaledWidth) / 2;
+                    imageContainer.style.left = `${leftOffset}px`;
+                    imageContainer.style.top = `0px`;
                 }
             };
         }
