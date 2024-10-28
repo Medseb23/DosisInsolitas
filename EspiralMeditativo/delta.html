@@ -69,31 +69,33 @@
         }
         /* Estilos para la imagen desplazable */
         #scrollingImage {
-            display: none;
+            display: none; /* Inicialmente oculto */
             position: fixed;
             top: 0;
             left: 0;
-            overflow: hidden; /* Ocultar contenido que se sale del contenedor */
             width: 100%;
             height: 100%;
+            background-image: url('deltatile.jpg');
+            background-repeat: repeat;
+            /* Variables CSS para controlar la animación */
+            --bg-size: cover;
+            --bg-pos-x: 0;
+            --bg-pos-y: 0;
+            --bg-move-x: 0;
+            --bg-move-y: 0;
+            background-size: var(--bg-size);
+            background-position: var(--bg-pos-x) var(--bg-pos-y);
+            animation: scrollBackground 20s linear infinite;
         }
 
-        .scrolling-container {
-            display: flex;
-            width: 200%; /* Duplicar el ancho para acomodar dos imágenes */
-            height: 100%;
-            animation: scroll 20s linear infinite;
-        }
-
-        .scrolling-container img {
-            width: 50%; /* Cada imagen ocupa la mitad del ancho del contenedor */
-            height: 100%;
-            object-fit: cover; /* Asegurar que la imagen cubra todo el espacio */
-        }
-
-        @keyframes scroll {
-            from { transform: translateX(0); }
-            to { transform: translateX(-50%); } /* Mover hacia la izquierda un 50% del ancho */
+        /* Animación para desplazar el fondo */
+        @keyframes scrollBackground {
+            from {
+                background-position: var(--bg-pos-x) var(--bg-pos-y);
+            }
+            to {
+                background-position: calc(var(--bg-pos-x) + var(--bg-move-x)) calc(var(--bg-pos-y) + var(--bg-move-y));
+            }
         }
 
         /* Estilo para la pantalla de agradecimiento */
@@ -128,12 +130,7 @@
     <canvas id="canvas"></canvas>
     <div id="indicator"></div>
     <!-- Contenedor de la imagen desplazable -->
-    <div id="scrollingImage">
-        <div class="scrolling-container">
-            <img src="deltatile.jpg" alt="Scrolling Image">
-            <img src="deltatile.jpg" alt="Scrolling Image">
-        </div>
-    </div>
+    <div id="scrollingImage"></div>
     <!-- Pantalla de agradecimiento -->
     <div id="thankYouScreen">
         <h1>Muchas gracias por participar en esta experiencia</h1>
@@ -247,6 +244,7 @@
             window.addEventListener('resize', resizeCanvas);
             initAudio();
             initFinalOscillators(); // Inicializar osciladores finales
+            adjustBackground(); // Ajustar el fondo desplazable
         }
 
         function initFinalOscillators() {
@@ -366,6 +364,9 @@
                     // Detener el sonido actual
                     stopSound();
 
+                    // Ajustar el fondo desplazable antes de mostrarlo
+                    adjustBackground();
+
                     // Mostrar la imagen desplazable inmediatamente
                     document.body.style.backgroundColor = '#000000';
                     scrollingImage.style.display = 'block';
@@ -435,6 +436,36 @@
                 thankYouScreen.style.display = 'block';
             }, 5000);
         }
+
+        // Función para ajustar el fondo desplazable
+        function adjustBackground() {
+            const img = new Image();
+            img.src = 'deltatile.jpg';
+
+            img.onload = function() {
+                const imgAspectRatio = img.width / img.height;
+                const windowAspectRatio = window.innerWidth / window.innerHeight;
+
+                if (windowAspectRatio >= imgAspectRatio) {
+                    // La pantalla es más ancha o igual que la imagen
+                    scrollingImage.style.setProperty('--bg-size', 'auto 100%');
+                    scrollingImage.style.setProperty('--bg-move-x', '-100%');
+                    scrollingImage.style.setProperty('--bg-move-y', '0');
+                } else {
+                    // La pantalla es más alta que la imagen
+                    scrollingImage.style.setProperty('--bg-size', '100% auto');
+                    scrollingImage.style.setProperty('--bg-move-x', '0');
+                    scrollingImage.style.setProperty('--bg-move-y', '-100%');
+                }
+            };
+        }
+
+        // Llamar a la función al cargar y al redimensionar
+        window.addEventListener('load', () => {
+            adjustBackground();
+        });
+
+        window.addEventListener('resize', adjustBackground);
 
         canvas.addEventListener('mousemove', onMove);
         canvas.addEventListener('touchmove', onMove, { passive: false });
