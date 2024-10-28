@@ -5,14 +5,14 @@
     <title>Ondas Delta para Sueño Profundo y Relajación</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        /* CSS */
+        /* Estilos CSS (sin cambios significativos) */
         body {
             margin: 0;
             overflow: hidden;
-            background-color: rgb(0, 0, 50); /* Color inicial */
+            background-color: rgb(0, 0, 50);
             font-family: Arial, sans-serif;
             color: #ffffff;
-            transition: background-color 1s; /* Transición para el cambio de fondo */
+            transition: background-color 1s;
         }
         #canvas {
             display: none;
@@ -20,7 +20,6 @@
             top: 0;
             left: 0;
         }
-        /* Estilo para el indicador visual */
         #indicator {
             position: absolute;
             width: 40px;
@@ -32,7 +31,6 @@
             display: none;
             animation: pulse 2s infinite;
         }
-        /* Estilo para el contenedor del mensaje de bienvenida */
         #welcomeMessage {
             position: absolute;
             top: 50%;
@@ -54,7 +52,6 @@
             font-size: 18px;
             line-height: 1.5;
         }
-        /* Estilo para el botón de inicio */
         #startButton {
             margin-top: 20px;
             padding: 15px 30px;
@@ -65,54 +62,37 @@
             border-radius: 10px;
             cursor: pointer;
         }
-        /* Animación de pulso para el indicador visual */
         @keyframes pulse {
-            0% {
-                transform: scale(1);
-                opacity: 1;
-            }
-            50% {
-                transform: scale(1.5);
-                opacity: 0.5;
-            }
-            100% {
-                transform: scale(1);
-                opacity: 1;
-            }
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.5); opacity: 0.5; }
+            100% { transform: scale(1); opacity: 1; }
         }
-        /* Estilos para la imagen desplazable */
         #scrollingImage {
-            display: none; /* Inicialmente oculto */
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%; /* Cubrir todo el ancho */
-            height: 100%;
-            background-image: url('deltatile.jpg');
-            background-repeat: repeat-x; /* Repetir horizontalmente */
-            background-size: auto 100%; /* Ajustar el alto de la imagen al contenedor */
-            animation: scrollBackground 20s linear infinite;
-            opacity: 1; /* Aseguramos que la opacidad inicial sea 1 */
-        }
-        /* Animación para desplazar el fondo */
-        @keyframes scrollBackground {
-            from {
-                background-position: 0 0;
-            }
-            to {
-                background-position: -100% 0;
-            }
-        }
-        /* Estilo para la pantalla de agradecimiento */
-        #thankYouScreen {
-            display: none; /* Inicialmente oculto */
+            display: none;
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: #000000; /* Fondo negro */
-            color: #ffffff; /* Texto blanco */
+            background-image: url('deltatile.jpg');
+            background-repeat: repeat-x;
+            background-size: auto 100%;
+            animation: scrollBackground 20s linear infinite;
+            opacity: 1;
+        }
+        @keyframes scrollBackground {
+            from { background-position: 0 0; }
+            to { background-position: -100% 0; }
+        }
+        #thankYouScreen {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000000;
+            color: #ffffff;
             text-align: center;
             padding-top: 20%;
         }
@@ -133,15 +113,12 @@
 </head>
 <body>
     <canvas id="canvas"></canvas>
-    <div id="indicator"></div> <!-- Indicador visual -->
-    <!-- Contenedor de la imagen desplazable -->
+    <div id="indicator"></div>
     <div id="scrollingImage"></div>
-    <!-- Pantalla de agradecimiento -->
     <div id="thankYouScreen">
         <h1>Muchas gracias por participar en esta experiencia</h1>
         <button id="acceptButton">Aceptar</button>
     </div>
-    <!-- Contenedor del mensaje de bienvenida -->
     <div id="welcomeMessage">
         <h1>Bienvenidos a la Experiencia de Ondas Delta</h1>
         <p>
@@ -167,13 +144,13 @@
         const thankYouScreen = document.getElementById('thankYouScreen');
         const acceptButton = document.getElementById('acceptButton');
         let width, height;
-        let wavePoints = []; // Almacenar los puntos de las ondas
-        let meditationTime = 1; // Tiempo de meditación seleccionado (por defecto 1 minuto)
-        let deltaFrequency = 2; // Frecuencia delta (2 Hz)
-        let pathCompleted = false; // Para asegurarnos de que solo se ejecute una vez
+        let wavePoints = [];
+        let meditationTime = 1;
+        let deltaFrequency = 2;
+        let pathCompleted = false;
         let oscillatorNodes = null;
         let audioContext = null;
-        let lastBaseFrequency = 0; // Para almacenar la última frecuencia base alcanzada
+        let lastBaseFrequency = 0;
 
         function resizeCanvas() {
             width = canvas.width = window.innerWidth;
@@ -182,11 +159,10 @@
             drawProgress();
         }
 
-        // Función para dibujar las ondas adaptativas y almacenar sus puntos
         function drawWaves() {
             ctx.clearRect(0, 0, width, height);
             ctx.strokeStyle = '#FFFFFF';
-            ctx.lineWidth = 15; // Hacer las líneas más anchas
+            ctx.lineWidth = 15;
             wavePoints = [];
             const centerX = width / 2;
             const totalSteps = 500;
@@ -203,7 +179,6 @@
             ctx.stroke();
         }
 
-        // Variables para el seguimiento del progreso
         let currentIndex = 0;
         let progressPoints = [];
 
@@ -300,7 +275,7 @@
             }
 
             if (isCursorNearCurrentPoint(x, y)) {
-                progressPoints.push(wavePoints[currentIndex - 1]); // Ajustamos el índice
+                progressPoints.push(wavePoints[currentIndex - 1]);
                 drawProgress();
                 indicator.style.left = x + 'px';
                 indicator.style.top = y + 'px';
@@ -327,17 +302,16 @@
                     pathCompleted = true;
                     // Detener el sonido actual
                     stopSound();
-                    // Transición de la pantalla a negro
+
+                    // Mostrar la imagen desplazable inmediatamente
                     document.body.style.backgroundColor = '#000000';
-                    // Mostrar la imagen desplazable
                     scrollingImage.style.display = 'block';
-                    // Ocultar elementos
                     canvas.style.display = 'none';
                     indicator.style.display = 'none';
-                    // Iniciar el sonido después de mostrar la imagen
-                    setTimeout(() => {
-                        playFinalSound(lastBaseFrequency);
-                    }, 100); // Esperamos un pequeño tiempo para asegurar que la imagen se muestra primero
+
+                    // Iniciar el sonido final directamente dentro del evento de usuario
+                    playFinalSound(lastBaseFrequency);
+
                     // Programar el fin de la meditación
                     let meditationDuration = meditationTime * 60 * 1000;
                     setTimeout(endMeditation, meditationDuration);
@@ -350,34 +324,49 @@
 
         function playFinalSound(baseFrequency) {
             if (!audioContext) return;
+
+            // Reanudar el AudioContext si está suspendido
+            if (audioContext.state === 'suspended') {
+                audioContext.resume();
+            }
+
             // Calcular la frecuencia de la cuarta justa (ratio 4:3)
             let fourthFrequency = baseFrequency * (4 / 3);
+
             // Crear osciladores para ambos canales
             const leftOscillator = audioContext.createOscillator();
             const rightOscillator = audioContext.createOscillator();
             leftOscillator.type = 'sine';
             rightOscillator.type = 'sine';
+
             // Mantener la diferencia delta
             leftOscillator.frequency.setValueAtTime(fourthFrequency, audioContext.currentTime);
             rightOscillator.frequency.setValueAtTime(fourthFrequency + deltaFrequency, audioContext.currentTime);
+
             // Crear nodos de ganancia y paneo
             const leftGain = audioContext.createGain();
             const rightGain = audioContext.createGain();
+
             // Iniciar con ganancia 0 para el fade-in
             leftGain.gain.setValueAtTime(0, audioContext.currentTime);
             rightGain.gain.setValueAtTime(0, audioContext.currentTime);
+
             // Realizar fade-in en 1 segundo
             leftGain.gain.linearRampToValueAtTime(0.1, audioContext.currentTime + 1);
             rightGain.gain.linearRampToValueAtTime(0.1, audioContext.currentTime + 1);
+
             const leftPanner = audioContext.createStereoPanner();
             leftPanner.pan.setValueAtTime(-1, audioContext.currentTime);
             const rightPanner = audioContext.createStereoPanner();
             rightPanner.pan.setValueAtTime(1, audioContext.currentTime);
+
             // Conectar nodos
             leftOscillator.connect(leftGain).connect(leftPanner).connect(audioContext.destination);
             rightOscillator.connect(rightGain).connect(rightPanner).connect(audioContext.destination);
+
             leftOscillator.start();
             rightOscillator.start();
+
             // Guardar los osciladores para el fade out
             oscillatorNodes = {
                 leftOscillator: leftOscillator,
@@ -388,7 +377,6 @@
         }
 
         function endMeditation() {
-            // Gradualmente reducir el volumen en 5 segundos
             if (oscillatorNodes) {
                 const endTime = audioContext.currentTime + 5;
                 oscillatorNodes.leftGain.gain.setValueAtTime(oscillatorNodes.leftGain.gain.value, audioContext.currentTime);
@@ -402,10 +390,8 @@
             // Desvanecer la imagen en 5 segundos
             scrollingImage.style.transition = 'opacity 5s';
             scrollingImage.style.opacity = 0;
-            // Después de 5 segundos, ocultar la imagen y mostrar la pantalla de agradecimiento
             setTimeout(() => {
                 scrollingImage.style.display = 'none';
-                // Mostrar la pantalla de agradecimiento
                 thankYouScreen.style.display = 'block';
             }, 5000);
         }
@@ -424,10 +410,8 @@
             stopSound();
         }, { passive: false });
 
-        // Agregar evento al botón de inicio
         startButton.addEventListener('click', startInteraction);
 
-        // Evento para el botón "Aceptar" en la pantalla de agradecimiento
         acceptButton.addEventListener('click', () => {
             window.location.href = 'https://dosisinsolitas.com';
         });
