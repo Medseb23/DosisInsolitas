@@ -28,16 +28,18 @@
             position: fixed;
             left: 10px;
             top: 50px;
-            width: 250px;
+            width: 200px; /* Reduce el ancho */
             background: rgba(0, 0, 0, 0.8);
             padding: 10px;
             border-radius: 8px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
             z-index: 10;
+            transform: scale(0.85); /* Ajusta el tamaño general */
+            transform-origin: top left;
         }
         .rb-container h2 {
             color: #ffd700;
-            font-size: 1.2em;
+            font-size: 1em;
             text-align: center;
             margin-bottom: 10px;
         }
@@ -155,10 +157,10 @@
 <body>
     <!-- Contenedor de Redbubble -->
     <div class="rb-container">
-        <h2>Nuestros Diseños en Redbubble</h2>
+        <h2>Nuestra Tienda en Redbubble</h2>
         <!-- Código de inserción de Redbubble -->
         <script type="text/javascript" src="https://www.redbubble.com/assets/external_portfolio.js"></script>
-        <script id="rb-xzfcxvzx" type="text/javascript">new RBExternalPortfolio('www.redbubble.com', 'dosisinsolitas', 5, 1).renderIframe();</script>
+        <script id="rb-xzfcxvzx" type="text/javascript">new RBExternalPortfolio('www.redbubble.com', 'dosisinsolitas', 3, 1).renderIframe();</script>
     </div>
 
     <div class="container">
@@ -191,19 +193,4 @@
             </div>
             <div class="article-card">
                 <h3>El Poder de la Meditación Durante la Luna Nueva</h3>
-                <p>La Luna Nueva es el momento perfecto para establecer nuevas intenciones y practicar la meditación. En este artículo, te mostramos cómo la meditación durante esta fase lunar puede ayudarte...</p>
-                <a href="https://dosisinsolitas.com/articulos/meditacionlunanueva">Leer más</a>
-            </div>
-            <div class="article-card">
-                <h3>Rituales Espirituales para Conectar con la Naturaleza</h3>
-                <p>Aprender a conectar con la naturaleza a través de rituales espirituales puede ser una herramienta poderosa para mejorar el bienestar personal...</p>
-                <a href="https://dosisinsolitas.com/articulos/ritualesnaturaleza">Leer más</a>
-            </div>
-        </section>
-        <footer>
-            <p>&copy; 2024 Dosis Insólitas. Todos los derechos reservados.</p>
-            <p><a href="https://dosisinsolitas.com/politica-de-privacidad/" class="footer-link">Política de Privacidad</a></p>
-        </footer>
-    </div>
-</body>
-</html>
+                <p>La Luna Nueva es el momento perfecto
