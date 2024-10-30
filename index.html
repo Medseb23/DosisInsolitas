@@ -28,13 +28,13 @@
             position: fixed;
             left: 10px;
             top: 50px;
-            width: 200px; /* Reduce el ancho */
+            width: 250px; /* Reduce el ancho */
             background: rgba(0, 0, 0, 0.8);
             padding: 10px;
             border-radius: 8px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
             z-index: 10;
-            transform: scale(0.85); /* Ajusta el tamaño general */
+            transform: scale(1); /* Ajusta el tamaño general */
             transform-origin: top left;
         }
         .rb-container h2 {
@@ -42,6 +42,24 @@
             font-size: 1em;
             text-align: center;
             margin-bottom: 10px;
+        }
+        .close-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: #ffd700;
+            border: none;
+            color: #000;
+            font-size: 1em;
+            font-weight: bold;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .close-btn:hover {
+            background-color: #ff4d4d;
         }
 
         /* Para pantallas grandes, mantiene el fondo fijo */
@@ -156,11 +174,12 @@
 </head>
 <body>
     <!-- Contenedor de Redbubble -->
-    <div class="rb-container">
-        <h2>Nuestros Diseños en Redbubble</h2>
+    <div class="rb-container" id="redbubbleContainer">
+        <button class="close-btn" onclick="document.getElementById('redbubbleContainer').style.display='none'">×</button>
+        <h2>Nuestra Tienda en Redbubble</h2>
         <!-- Código de inserción de Redbubble -->
         <script type="text/javascript" src="https://www.redbubble.com/assets/external_portfolio.js"></script>
-        <script id="rb-xzfcxvzx" type="text/javascript">new RBExternalPortfolio('www.redbubble.com', 'dosisinsolitas', 5, 1).renderIframe();</script>
+        <script id="rb-xzfcxvzx" type="text/javascript">new RBExternalPortfolio('www.redbubble.com', 'dosisinsolitas', 4, 1).renderIframe();</script>
     </div>
 
     <div class="container">
@@ -193,4 +212,19 @@
             </div>
             <div class="article-card">
                 <h3>El Poder de la Meditación Durante la Luna Nueva</h3>
-                <p>La Luna Nueva es el momento perfecto
+                <p>La Luna Nueva es el momento perfecto para establecer nuevas intenciones y practicar la meditación. En este artículo, te mostramos cómo la meditación durante esta fase lunar puede ayudarte...</p>
+                <a href="https://dosisinsolitas.com/articulos/meditacionlunanueva">Leer más</a>
+            </div>
+            <div class="article-card">
+                <h3>Rituales Espirituales para Conectar con la Naturaleza</h3>
+                <p>Aprender a conectar con la naturaleza a través de rituales espirituales puede ser una herramienta poderosa para mejorar el bienestar personal...</p>
+                <a href="https://dosisinsolitas.com/articulos/ritualesnaturaleza">Leer más</a>
+            </div>
+        </section>
+        <footer>
+            <p>&copy; 2024 Dosis Insólitas. Todos los derechos reservados.</p>
+            <p><a href="https://dosisinsolitas.com/politica-de-privacidad/" class="footer-link">Política de Privacidad</a></p>
+        </footer>
+    </div>
+</body>
+</html>
