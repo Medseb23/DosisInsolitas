@@ -23,19 +23,19 @@
             padding: 0;
         }
 
-        /* Estilos del contenedor de Redbubble */
         .rb-container {
             position: fixed;
             left: 10px;
             top: 50px;
-            width: 250px; /* Reduce el ancho */
+            width: 250px;
             background: rgba(0, 0, 0, 0.8);
             padding: 10px;
             border-radius: 8px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
             z-index: 10;
-            transform: scale(1); /* Ajusta el tamaño general */
+            transform: scale(1);
             transform-origin: top left;
+            text-align: center;
         }
         .rb-container h2 {
             color: #ffd700;
@@ -43,33 +43,37 @@
             text-align: center;
             margin-bottom: 10px;
         }
-        .close-btn {
-            position: absolute;
-            top: 5px;
-            right: 5px;
+        .rb-container img {
+            width: 100%;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+        .rb-container p {
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }
+        .rb-container a {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 10px 20px;
             background: #ffd700;
-            border: none;
             color: #000;
-            font-size: 1em;
             font-weight: bold;
-            border-radius: 50%;
-            width: 25px;
-            height: 25px;
-            cursor: pointer;
+            border-radius: 8px;
+            text-decoration: none;
             transition: background-color 0.3s ease;
         }
-        .close-btn:hover {
+        .rb-container a:hover {
             background-color: #ff4d4d;
+            color: #fff;
         }
 
-        /* Para pantallas grandes, mantiene el fondo fijo */
         @media (min-width: 1024px) {
             body {
                 background-attachment: fixed;
             }
         }
 
-        /* Ajustes para pantallas pequeñas */
         @media (max-width: 768px) {
             body {
                 background-position: center top;
@@ -173,13 +177,14 @@
     </style>
 </head>
 <body>
-    <!-- Contenedor de Redbubble -->
-    <div class="rb-container" id="redbubbleContainer">
-        <button class="close-btn" onclick="document.getElementById('redbubbleContainer').style.display='none'">×</button>
-        <h2>Nuestra Tienda en Redbubble</h2>
-        <!-- Código de inserción de Redbubble -->
-        <script type="text/javascript" src="https://www.redbubble.com/assets/external_portfolio.js"></script>
-        <script id="rb-xzfcxvzx" type="text/javascript">new RBExternalPortfolio('www.redbubble.com', 'dosisinsolitas', 4, 1).renderIframe();</script>
+    <!-- Contenedor de Productos Recomendados -->
+    <div class="rb-container" id="recomendadosContainer">
+        <h2>☾ Productos Místicos Recomendados ☽</h2>
+        <div>
+            <img src="images/collarpiedraluna.jpg" alt="Collar de Piedra de Luna">
+            <p>Conecta con tu poder interior durante la Lluvia de Estrellas 🌠</p>
+            <a href="https://mercadolibre.com/sec/2b35PUa" target="_blank">Lo quiero ✨</a>
+        </div>
     </div>
 
     <div class="container">
@@ -190,6 +195,7 @@
             <h1>Dosis Insólitas</h1>
             <p>Explora lo curioso, lo espiritual y lo mágico del universo con nuestras herramientas únicas, artículos especializados y contenido espiritual.</p>
         </header>
+
         <div class="link-container">
             <a href="https://dosisinsolitas.com/espiralmeditativo/delta.html" class="link"><i class="fas fa-brain"></i> Estimulador Cerebral de Ondas Delta</a>
             <a href="https://dosisinsolitas.com/espiralmeditativo" class="link"><i class="fas fa-brain"></i> Estimulador Cerebral de Ondas Theta</a>
@@ -199,6 +205,7 @@
             <a href="https://www.tiktok.com/@dosisinsolitas" target="_blank" class="link"><i class="fab fa-tiktok"></i> Síguenos en TikTok</a>
             <a href="https://www.redbubble.com/es/people/dosisinsolitas/shop?asc=u" target="_blank" class="link"><i class="fas fa-store"></i> Visita Nuestra Tienda</a>
         </div>
+
         <section class="article-gallery">
             <div class="article-card">
                 <h3>La Influencia de la Luna Llena en Nuestras Emociones</h3>
@@ -221,6 +228,7 @@
                 <a href="https://dosisinsolitas.com/articulos/ritualesnaturaleza">Leer más</a>
             </div>
         </section>
+
         <footer>
             <p>&copy; 2024 Dosis Insólitas. Todos los derechos reservados.</p>
             <p><a href="https://dosisinsolitas.com/politica-de-privacidad/" class="footer-link">Política de Privacidad</a></p>
