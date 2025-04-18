@@ -15,32 +15,26 @@
             background-attachment: scroll;
             color: #fff;
             display: flex;
-            justify-content: center;
-            align-items: center;
             flex-direction: column;
+            align-items: center;
             min-height: 100vh;
             margin: 0;
             padding: 0;
         }
 
         .rb-container {
-            position: fixed;
-            left: 10px;
-            top: 50px;
-            width: 250px;
             background: rgba(0, 0, 0, 0.8);
-            padding: 10px;
-            border-radius: 8px;
+            padding: 15px;
+            border-radius: 10px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-            z-index: 10;
-            transform: scale(1);
-            transform-origin: top left;
             text-align: center;
+            margin: 20px 0;
+            width: 90%;
+            max-width: 300px;
         }
         .rb-container h2 {
             color: #ffd700;
-            font-size: 1em;
-            text-align: center;
+            font-size: 1.2em;
             margin-bottom: 10px;
         }
         .rb-container img {
@@ -49,35 +43,37 @@
             margin-bottom: 10px;
         }
         .rb-container p {
-            font-size: 0.9em;
+            font-size: 1em;
             margin-bottom: 10px;
         }
         .rb-container a {
             display: inline-block;
             margin-top: 10px;
-            padding: 10px 20px;
+            padding: 12px 24px;
             background: #ffd700;
             color: #000;
             font-weight: bold;
-            border-radius: 8px;
+            border-radius: 30px;
             text-decoration: none;
-            transition: background-color 0.3s ease;
+            font-size: 1.2em;
+            transition: transform 0.3s ease, background-color 0.3s ease;
+            animation: pulse 2s infinite;
         }
         .rb-container a:hover {
             background-color: #ff4d4d;
             color: #fff;
+            transform: scale(1.1);
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
         }
 
         @media (min-width: 1024px) {
             body {
                 background-attachment: fixed;
-            }
-        }
-
-        @media (max-width: 768px) {
-            body {
-                background-position: center top;
-                background-size: auto 100%;
             }
         }
 
@@ -177,14 +173,11 @@
     </style>
 </head>
 <body>
-    <!-- Contenedor de Productos Recomendados -->
     <div class="rb-container" id="recomendadosContainer">
         <h2>☾ Productos Místicos Recomendados ☽</h2>
-        <div>
-            <img src="images/collarpiedraluna.jpg" alt="Collar de Piedra de Luna">
-            <p>Conecta con tu poder interior durante la Lluvia de Estrellas 🌠</p>
-            <a href="https://mercadolibre.com/sec/2b35PUa" target="_blank">Lo quiero ✨</a>
-        </div>
+        <img src="images/collarpiedraluna.jpg" alt="Collar de Piedra de Luna">
+        <p>Conecta con tu poder interior durante la Lluvia de Estrellas 🌠</p>
+        <a href="https://mercadolibre.com/sec/2b35PUa" target="_blank">Lo quiero ✨</a>
     </div>
 
     <div class="container">
